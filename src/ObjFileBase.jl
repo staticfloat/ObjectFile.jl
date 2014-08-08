@@ -2,7 +2,7 @@ module ObjFileBase
 
 export ObjectHandle, SectionRef, SymbolRef
 
-import Base: read, seek, readbytes, position
+import Base: read, seek, readbytes, position, show
 
 ########## ObjFileBase.jl - Basic shared functionality for all object files ####
 #
@@ -106,6 +106,9 @@ abstract Section{T<:ObjectHandle}
 abstract SymbolRef{T<:ObjectHandle}
 abstract SymtabEntry{T<:ObjectHandle}
 
+handleT{T}(::Union(Type{SectionRef{T}}, Type{Section{T}}, Type{SymbolRef{T}},
+    Type{SymtabEntry{T}})) = T
+
 ################################# Utilities ####################################
 
 typealias SectionOrRef{T} Union(Section{T},SectionRef{T})
@@ -113,12 +116,13 @@ typealias SectionOrRef{T} Union(Section{T},SectionRef{T})
 sectionsize(sect::SectionRef) = sectionsize(deref(sect))
 sectionoffset(sect::SectionRef) = sectionoffset(deref(sect))
 
-seek{T<:ObjectHandle}(oh::T, section::Section{T}) =
-    seek(oh,sectionoffset(section))
+seek{T<:ObjectHandle,S}(oh::T, section::Section{S}) =
+    (@assert T <: S; seek(oh,sectionoffset(section)))
 
 seek(section::SectionRef) = seek(handle(section), deref(section))
 
-function readbytes{T<:ObjectHandle}(oh::T,sec::Section{T})
+function readbytes{T<:ObjectHandle,S}(oh::T,sec::Section{S})
+    @assert T <: S
     seek(oh, sec)
     readbytes(oh, sectionsize(sec))
 end
@@ -134,9 +138,8 @@ readbytes(sec::SectionRef) = readbytes(handle(sec),deref(sec))
 
 using DWARF
 
-@mustimplement debugsections(oh::ObjectHandle)
-
-function read{T<:ObjectHandle}(oh::T,sec::Section{T},::Type{DWARF.ARTable})
+function read{T<:ObjectHandle,S}(oh::T,sec::Section{S},::Type{DWARF.ARTable})
+    @assert T <: S
     seek(oh, sec)
     ret = DWARF.ARTable(Array(DWARF.ARTableSet,0))
     while position(oh) < sectionoffset(sec) + sectionsize(sec)
@@ -145,7 +148,8 @@ function read{T<:ObjectHandle}(oh::T,sec::Section{T},::Type{DWARF.ARTable})
     ret
 end
 
-function read{T<:ObjectHandle}(oh::T,sec::Section{T},::Type{DWARF.PUBTable})
+function read{T<:ObjectHandle,S}(oh::T,sec::Section{S},::Type{DWARF.PUBTable})
+    @assert T <: S
     seek(oh, sec)
     ret = DWARF.PUBTable(Array(DWARF.PUBTableSet,0))
     while position(oh) < sectionoffset(sec) + sectionsize(sec)
@@ -154,36 +158,167 @@ function read{T<:ObjectHandle}(oh::T,sec::Section{T},::Type{DWARF.PUBTable})
     ret
 end
 
-function read{T<:ObjectHandle}(oh::T, sec::Section{T},
+function read{T<:ObjectHandle,S}(oh::T, sec::Section{S},
         ::Type{DWARF.AbbrevTableSet})
+    @assert T <: S
     seek(oh, sec)
     read(oh, AbbrevTableSet, endianness(oh))
 end
 
-function read{T<:ObjectHandle}(oh::T,sec::Section{T},
+function read{T<:ObjectHandle,S}(oh::T,debug_info::Section{S},
         s::DWARF.PUBTableSet,::Type{DWARF.DWARFCUHeader})
-
-    seek(oh,sectionoffsect(debug_info)+s.header.debug_info_offset)
+    @assert T <: S
+    seek(oh,sectionoffset(debug_info)+s.header.debug_info_offset)
     read(oh,DWARF.DWARFCUHeader, endianness(oh))
 end
 
-function read{T<:ObjectHandle}(oh::T, sec::Section{T}, s::DWARF.DWARFCUHeader,
+function read{T<:ObjectHandle,S}(oh::T, debug_info::Section{S}, s::DWARF.DWARFCUHeader,
         ::Type{DWARF.AbbrevTableSet})
-
-    seek(oh,sectionoffsect(debug_info)+s.debug_abbrev_offset)
+    @assert T <: S
+    seek(oh,sectionoffset(debug_info)+s.debug_abbrev_offset)
     read(oh,DWARF.AbbrevTableSet, endianness(oh))
 end
 
-function read{T<:ObjectHandle}(oh::T,
-    debug_info::Section{T}, debug_abbrev::Section{T},
+function read{T<:ObjectHandle,S}(oh::T,
+    debug_info::Section{S}, debug_abbrev::Section{S},
     s::DWARF.PUBTableSet, e::DWARF.PUBTableEntry,
     header::DWARF.DWARFCUHeader, ::Type{DWARF.DIETree})
 
+    @assert T <: S
     ats = read(oh,debug_abbrev,header,DWARF.AbbrevTableSet)
-    seek(oh,sectionoffset(offset)+s.header.debug_info_offset+e.offset)
+    seek(oh,sectionoffset(debug_info)+s.header.debug_info_offset+e.offset)
     ret = DWARF.DIETree(Array(DWARF.DIETreeNode,0))
     read(oh,header,ats,ret,DWARF.DIETreeNode,:LittleEndian)
     ret
 end
+
+typealias Maybe{T} Union(T,Nothing)
+
+# # # Higher level debug info support
+immutable DebugSections{T<:ObjectHandle, Sect}
+    oh::T
+    debug_abbrev::Maybe{Sect}
+    debug_aranges::Maybe{Sect}
+    debug_frame::Maybe{Sect}
+    debug_info::Maybe{Sect}
+    debug_line::Maybe{Sect}
+    debug_loc::Maybe{Sect}
+    debug_macinfo::Maybe{Sect}
+    debug_pubnames::Maybe{Sect}
+    debug_ranges::Maybe{Sect}
+    debug_str::Maybe{Sect}
+    debug_types::Maybe{Sect}
+
+end
+
+function DebugSections{T}(oh::T; debug_abbrev = nothing, debug_aranges = nothing,
+    debug_frame = nothing, debug_info = nothing, debug_line = nothing,
+    debug_macinfo = nothing, debug_pubnames = nothing, debug_loc= nothing,
+    debug_ranges = nothing, debug_str = nothing, debug_types = nothing)
+    DebugSections(oh, debug_abbrev, debug_aranges, debug_frame, debug_info,
+        debug_line, debug_loc, debug_macinfo, debug_pubnames, debug_ranges,
+        debug_pubnames, debug_ranges)
+end
+
+function DebugSections{T<:ObjectHandle}(oh::T, sections::Dict)
+    DebugSections(oh,
+        debug_abbrev = get(sections, "debug_abbrev", nothing),
+        debug_aranges = get(sections, "debug_aranges", nothing),
+        debug_frame = get(sections, "debug_frame", nothing),
+        debug_info = get(sections, "debug_info", nothing),
+        debug_line = get(sections, "debug_line", nothing),
+        debug_loc = get(sections, "debug_loc", nothing),
+        debug_macinfo = get(sections, "debug_macinfo", nothing),
+        debug_pubnames = get(sections, "debug_pubnames", nothing),
+        debug_ranges = get(sections, "debug_ranges", nothing),
+        debug_str = get(sections, "debug_str", nothing),
+        debug_types = get(sections, "debug_types", nothing))
+end
+
+function show(io::IO, dsect::DebugSections)
+    println(io, "Debug Sections for $(dsect.oh)")
+    println(io,"========================= debug_abbrev =========================")
+    println(io,dsect.debug_abbrev)
+    println(io,"======================== debug_aranges =========================")
+    println(io,dsect.debug_aranges)
+    println(io,"========================= debug_frame ==========================")
+    println(io,dsect.debug_frame)
+    println(io,"========================= debug_info ===========================")
+    println(io,dsect.debug_info)
+    println(io,"========================= debug_line ===========================")
+    println(io,dsect.debug_line)
+    println(io,"========================== debug_loc ===========================")
+    println(io,dsect.debug_loc)
+    println(io,"======================== debug_macinfo =========================")
+    println(io,dsect.debug_macinfo)
+    println(io,"======================= debug_pubnames =========================")
+    println(io,dsect.debug_pubnames)
+    println(io,"======================== debug_ranges ==========================")
+    println(io,dsect.debug_ranges)
+    println(io,"=========================== debug_str ==========================")
+    println(io,dsect.debug_str)
+    println(io,"========================= debug_types ==========================")
+    println(io,dsect.debug_types)
+end
+
+@mustimplement debugsections(oh::ObjectHandle)
+
+export findindexbyname, findcubyname
+
+function findindexbyname(x::DebugSections,name;
+        pubtable=read(x.oh, deref(x.debug_pubnames), DWARF.PUBTable))
+    symbols = map(y->map(x->x.name,y.entries),pubtable.sets)
+    for i = 1:length(symbols)
+        ind = findfirst(symbols[i],name)
+        if ind != 0
+            return (i,ind)
+        end
+    end
+    return (0,0)
+end
+
+function findcubyname(x::DebugSections, name;
+    pubtable = read(x.oh, deref(x.debug_pubnames), DWARF.PUBTable))
+    (si,ei) = findindexbyname(x, name; pubtable = pubtable)
+    if si == ei == 0
+        error("Not Found")
+    end
+    read(x.oh,deref(x.debug_info),pubtable.sets[si],DWARF.DWARFCUHeader)
+end
+
+function finddietreebyname(x::DebugSections, name;
+    pubtable = read(x.oh, deref(x.debug_pubnames), DWARF.PUBTable))
+    (si,ei) = findindexbyname(x, name; pubtable = pubtable)
+    if si == ei == 0
+        error("Not Found")
+    end
+    pubset = pubtable.sets[si]
+    pubentry = pubset.entries[ei]
+    cu = read(x.oh,deref(x.debug_info),pubset,DWARF.DWARFCUHeader)
+    d = read(x.oh,deref(x.debug_info),deref(x.debug_abbrev),pubset,pubentry,
+        cu,DWARF.DIETree)
+end
+
+
+# User facing interfaces
+
+function readmeta(io::IO)
+    ts = subtypes(ObjFileBase.ObjectHandle)
+    for T in ts
+        try
+            return readmeta(io, T)
+        catch
+        end
+    end
+    error("""
+        Object file is not any of $(join(ts, ", "))!
+        To force one object file use readmeta(io,T).
+        If the format you want is not listed, make sure
+        the appropriate pacakge is loaded before calling
+        this function.
+        """)
+end
+
+readmeta(file::String) = readmeta(open(file,"r"))
 
 end # module

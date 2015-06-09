@@ -1,6 +1,9 @@
 module ObjFileBase
 
-export ObjectHandle, SectionRef, SymbolRef
+export ObjectHandle, SectionRef, SymbolRef, debugsections
+
+export printfield, printentry, printfield_with_color, deref,
+    sectionaddress, sectionoffset, sectionsize, sectionname
 
 import Base: read, seek, readbytes, position, show
 
@@ -97,6 +100,12 @@ abstract Section{T<:ObjectHandle}
 # The offset of the section in the file
 @mustimplement sectionoffset(section::Section)
 
+# The address of the section in virtual memory
+@mustimplement sectionaddress(section::Section)
+
+# The name of the section
+@mustimplement sectionname(section::SectionRef)
+
 # Retrieving the actual section datastructure
 @mustimplement deref(section::SectionRef)
 
@@ -106,8 +115,16 @@ abstract Section{T<:ObjectHandle}
 abstract SymbolRef{T<:ObjectHandle}
 abstract SymtabEntry{T<:ObjectHandle}
 
+sectionsize(x::SectionRef) = sectionsize(deref(x))
+sectionaddress(x::SectionRef) = sectionaddress(deref(x))
+sectionoffset(x::SectionRef) = sectionoffset(deref(x))
+
 handleT{T}(::Union(Type{SectionRef{T}}, Type{Section{T}}, Type{SymbolRef{T}},
     Type{SymtabEntry{T}})) = T
+
+abstract StrTab
+
+@mustimplement strtab_lookup(s::StrTab, offset)
 
 ################################# Utilities ####################################
 
@@ -217,7 +234,7 @@ function DebugSections{T}(oh::T; debug_abbrev = nothing, debug_aranges = nothing
     debug_ranges = nothing, debug_str = nothing, debug_types = nothing)
     DebugSections(oh, debug_abbrev, debug_aranges, debug_frame, debug_info,
         debug_line, debug_loc, debug_macinfo, debug_pubnames, debug_ranges,
-        debug_pubnames, debug_ranges)
+        debug_str, debug_types)
 end
 
 function DebugSections{T<:ObjectHandle}(oh::T, sections::Dict)
@@ -299,15 +316,50 @@ function finddietreebyname(x::DebugSections, name;
         cu,DWARF.DIETree)
 end
 
+function read(x::DebugSections, ::Type{DWARF.ARTableSet})
+    read(x.oh, deref(x.debug_aranges), DWARF.ARTableSet)
+end
+
+# Utils
+# JIT Utils
+
+function is_jit_section(s::Section)
+    sectionaddress(s) > 0x100000
+end
+is_jit_section(s::SectionRef) = is_jit_section(deref(s))
+
+@mustimplement replace_sections_from_memory(h::ObjectHandle, buffer)
+
+# Printing utils
+function printfield(io::IO,string,fieldlength; align = :right)
+    (align == :right) && print(io," "^max(fieldlength-length(string),0))
+    print(io,string)
+    (align == :left) && print(io," "^max(fieldlength-length(string),0))
+end
+function printfield_with_color(color,io::IO,string,fieldlength; align = :right)
+    (align == :right) && print(io," "^max(fieldlength-length(string),0))
+    print_with_color(color,io,string)
+    (align == :left) && print(io," "^max(fieldlength-length(string),0))
+end
+printentry(io::IO,header,values...) = (printfield(io,header,21);println(io," ",values...))
 
 # User facing interfaces
 
+immutable MagicMismatch;
+    message
+end
+
 function readmeta(io::IO)
     ts = subtypes(ObjFileBase.ObjectHandle)
+    pos = position(io)
     for T in ts
+        seek(io,pos)
         try
             return readmeta(io, T)
-        catch
+        catch e
+            if !isa(e,MagicMismatch)
+                rethrow(e)
+            end
         end
     end
     error("""
@@ -320,5 +372,10 @@ function readmeta(io::IO)
 end
 
 readmeta(file::String) = readmeta(open(file,"r"))
+
+# Others
+
+function getSectionLoadAddress
+end
 
 end # module

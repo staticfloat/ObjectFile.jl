@@ -3,7 +3,8 @@ module ObjFileBase
 export ObjectHandle, SectionRef, SymbolRef, debugsections
 
 export printfield, printentry, printfield_with_color, deref,
-    sectionaddress, sectionoffset, sectionsize, sectionname
+    sectionaddress, sectionoffset, sectionsize, sectionname,
+    load_strtab
 
 import Base: read, seek, readbytes, position, show
 
@@ -124,6 +125,8 @@ handleT{T}(::Union(Type{SectionRef{T}}, Type{Section{T}}, Type{SymbolRef{T}},
 
 abstract StrTab
 
+function load_strtab
+end
 @mustimplement strtab_lookup(s::StrTab, offset)
 
 ################################# Utilities ####################################

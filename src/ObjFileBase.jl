@@ -221,42 +221,10 @@ end
 
 export findindexbyname, findcubyname
 
-function findindexbyname(x::DebugSections,name;
-        pubtable=read(x.oh, deref(x.debug_pubnames), DWARF.PUBTable))
-    symbols = map(y->map(x->x.name,y.entries),pubtable.sets)
-    for i = 1:length(symbols)
-        ind = findfirst(symbols[i],name)
-        if ind != 0
-            return (i,ind)
-        end
-    end
-    return (0,0)
+function findindexbyname
 end
 
-function findcubyname(x::DebugSections, name;
-    pubtable = read(x.oh, deref(x.debug_pubnames), DWARF.PUBTable))
-    (si,ei) = findindexbyname(x, name; pubtable = pubtable)
-    if si == ei == 0
-        error("Not Found")
-    end
-    read(x.oh,deref(x.debug_info),pubtable.sets[si],DWARF.DWARFCUHeader)
-end
-
-function finddietreebyname(x::DebugSections, name;
-    pubtable = read(x.oh, deref(x.debug_pubnames), DWARF.PUBTable))
-    (si,ei) = findindexbyname(x, name; pubtable = pubtable)
-    if si == ei == 0
-        error("Not Found")
-    end
-    pubset = pubtable.sets[si]
-    pubentry = pubset.entries[ei]
-    cu = read(x.oh,deref(x.debug_info),pubset,DWARF.DWARFCUHeader)
-    d = read(x.oh,deref(x.debug_info),deref(x.debug_abbrev),pubset,pubentry,
-        cu,DWARF.DIETree)
-end
-
-function read(x::DebugSections, ::Type{DWARF.ARTableSet})
-    read(x.oh, deref(x.debug_aranges), DWARF.ARTableSet)
+function findcubyname
 end
 
 # Utils

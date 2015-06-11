@@ -4,7 +4,7 @@ export ObjectHandle, SectionRef, SymbolRef, debugsections
 
 export printfield, printentry, printfield_with_color, deref,
     sectionaddress, sectionoffset, sectionsize, sectionname,
-    load_strtab
+    load_strtab, readmeta
 
 import Base: read, seek, readbytes, position, show
 
@@ -147,70 +147,6 @@ function readbytes{T<:ObjectHandle,S}(oh::T,sec::Section{S})
     readbytes(oh, sectionsize(sec))
 end
 readbytes(sec::SectionRef) = readbytes(handle(sec),deref(sec))
-
-# # # DWARF support
-#
-#   Whether or not this is the right place to put this is up for debate, but
-#   this way, DWARF does not need to be concerned with the specific notion of
-#   being embedded in an object file.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-using DWARF
-
-function read{T<:ObjectHandle,S}(oh::T,sec::Section{S},::Type{DWARF.ARTable})
-    @assert T <: S
-    seek(oh, sec)
-    ret = DWARF.ARTable(Array(DWARF.ARTableSet,0))
-    while position(oh) < sectionoffset(sec) + sectionsize(sec)
-        push!(ret.sets, read(oh, DWARF.ARTableSet, endianness(oh)))
-    end
-    ret
-end
-
-function read{T<:ObjectHandle,S}(oh::T,sec::Section{S},::Type{DWARF.PUBTable})
-    @assert T <: S
-    seek(oh, sec)
-    ret = DWARF.PUBTable(Array(DWARF.PUBTableSet,0))
-    while position(oh) < sectionoffset(sec) + sectionsize(sec)
-        push!(ret.sets,read(oh,DWARF.PUBTableSet, endianness(oh)))
-    end
-    ret
-end
-
-function read{T<:ObjectHandle,S}(oh::T, sec::Section{S},
-        ::Type{DWARF.AbbrevTableSet})
-    @assert T <: S
-    seek(oh, sec)
-    read(oh, AbbrevTableSet, endianness(oh))
-end
-
-function read{T<:ObjectHandle,S}(oh::T,debug_info::Section{S},
-        s::DWARF.PUBTableSet,::Type{DWARF.DWARFCUHeader})
-    @assert T <: S
-    seek(oh,sectionoffset(debug_info)+s.header.debug_info_offset)
-    read(oh,DWARF.DWARFCUHeader, endianness(oh))
-end
-
-function read{T<:ObjectHandle,S}(oh::T, debug_info::Section{S}, s::DWARF.DWARFCUHeader,
-        ::Type{DWARF.AbbrevTableSet})
-    @assert T <: S
-    seek(oh,sectionoffset(debug_info)+s.debug_abbrev_offset)
-    read(oh,DWARF.AbbrevTableSet, endianness(oh))
-end
-
-function read{T<:ObjectHandle,S}(oh::T,
-    debug_info::Section{S}, debug_abbrev::Section{S},
-    s::DWARF.PUBTableSet, e::DWARF.PUBTableEntry,
-    header::DWARF.DWARFCUHeader, ::Type{DWARF.DIETree})
-
-    @assert T <: S
-    ats = read(oh,debug_abbrev,header,DWARF.AbbrevTableSet)
-    seek(oh,sectionoffset(debug_info)+s.header.debug_info_offset+e.offset)
-    ret = DWARF.DIETree(Array(DWARF.DIETreeNode,0))
-    read(oh,header,ats,ret,DWARF.DIETreeNode,:LittleEndian)
-    ret
-end
 
 typealias Maybe{T} Union(T,Nothing)
 

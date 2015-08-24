@@ -93,6 +93,8 @@ readmeta{T<:ObjectHandle}(io::IO, ::Type{T}) =
 
 abstract SectionRef{T<:ObjectHandle}
 abstract Section{T<:ObjectHandle}
+abstract Relocation{T<:ObjectHandle}
+abstract RelocationRef{T<:ObjectHandle}
 
 # The size of the actual data contained in the section. This should exclude any
 # padding mandated by the file format e.g. due to alignment rules
@@ -109,6 +111,7 @@ abstract Section{T<:ObjectHandle}
 
 # Retrieving the actual section datastructure
 @mustimplement deref(section::SectionRef)
+deref(section::Section) = section
 
 # Retrieving the object handle
 @mustimplement handle(section::SectionRef)
@@ -279,6 +282,8 @@ function readmeta(io::IO)
 end
 
 readmeta(file::String) = readmeta(open(file,"r"))
+
+read{T<:ObjectHandle}(oh::T, args...) = read(oh.io,args...)
 
 # Others
 

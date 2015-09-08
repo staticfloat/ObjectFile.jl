@@ -194,6 +194,19 @@ function DebugSections{T<:ObjectHandle}(oh::T, sections::Dict)
         debug_types = get(sections, "debug_types", nothing))
 end
 
+const DEBUG_SECTIONS = [
+    "debug_abbrev",
+    "debug_aranges",
+    "debug_frame",
+    "debug_info",
+    "debug_line",
+    "debug_loc",
+    "debug_macinfo",
+    "debug_pubnames",
+    "debug_ranges",
+    "debug_str",
+    "debug_types"]
+
 function show(io::IO, dsect::DebugSections)
     println(io, "Debug Sections for $(dsect.oh)")
     println(io,"========================= debug_abbrev =========================")

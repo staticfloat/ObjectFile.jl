@@ -123,8 +123,8 @@ sectionsize(x::SectionRef) = sectionsize(deref(x))
 sectionaddress(x::SectionRef) = sectionaddress(deref(x))
 sectionoffset(x::SectionRef) = sectionoffset(deref(x))
 
-handleT{T}(::Union(Type{SectionRef{T}}, Type{Section{T}}, Type{SymbolRef{T}},
-    Type{SymtabEntry{T}})) = T
+handleT{T}(::Union{Type{SectionRef{T}}, Type{Section{T}}, Type{SymbolRef{T}},
+    Type{SymtabEntry{T}}}) = T
 
 abstract StrTab
 
@@ -134,7 +134,7 @@ end
 
 ################################# Utilities ####################################
 
-typealias SectionOrRef{T} Union(Section{T},SectionRef{T})
+typealias SectionOrRef{T} Union{Section{T},SectionRef{T}}
 
 sectionsize(sect::SectionRef) = sectionsize(deref(sect))
 sectionoffset(sect::SectionRef) = sectionoffset(deref(sect))
@@ -151,7 +151,7 @@ function readbytes{T<:ObjectHandle,S}(oh::T,sec::Section{S})
 end
 readbytes(sec::SectionRef) = readbytes(handle(sec),deref(sec))
 
-typealias Maybe{T} Union(T,Nothing)
+typealias Maybe{T} Union{T,Void}
 
 # # # Higher level debug info support
 immutable DebugSections{T<:ObjectHandle, Sect}
@@ -294,7 +294,7 @@ function readmeta(io::IO)
         """)
 end
 
-readmeta(file::String) = readmeta(open(file,"r"))
+readmeta(file::AbstractString) = readmeta(open(file,"r"))
 
 read{T<:ObjectHandle}(oh::T, args...) = read(oh.io,args...)
 

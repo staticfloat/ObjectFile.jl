@@ -4,7 +4,7 @@ export ObjectHandle, SectionRef, SymbolRef, debugsections
 
 export printfield, printentry, printfield_with_color, deref,
     sectionaddress, sectionoffset, sectionsize, sectionname,
-    load_strtab, readmeta
+    load_strtab, readmeta, StrTab
 
 import Base: read, seek, readbytes, position, show
 

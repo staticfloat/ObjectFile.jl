@@ -1,12 +1,13 @@
+__precompile__()
 module ObjFileBase
 
 export ObjectHandle, SectionRef, SymbolRef, debugsections
 
 export printfield, printentry, printfield_with_color, deref,
     sectionaddress, sectionoffset, sectionsize, sectionname,
-    load_strtab, readmeta, StrTab, symname
+    load_strtab, readmeta, StrTab, symname, Sections, symbolvalue
 
-import Base: read, seek, readbytes, position, show
+import Base: read, seek, readbytes, position, show, showcompact
 
 ########## ObjFileBase.jl - Basic shared functionality for all object files ####
 #
@@ -80,6 +81,18 @@ readmeta{T<:ObjectHandle}(io::IO, ::Type{T}) =
 @mustimplement seek(oh::ObjectHandle, args...)
 @mustimplement position(oh::ObjectHandle)
 
+"""
+Determine whether an object file is a relocatable (.o) object file.
+"""
+function isrelocatable
+end
+
+"""
+Turn a section name into the object-file specific naming convention.
+"""
+function mangle_sname
+end
+
 ##
 #  These are parameterized on the type of Object Handle. An imaginary Foo
 #  fileformat might declare:
@@ -91,20 +104,11 @@ readmeta{T<:ObjectHandle}(io::IO, ::Type{T}) =
 #   end
 ##
 
+abstract Sections
 abstract SectionRef{T<:ObjectHandle}
 abstract Section{T<:ObjectHandle}
 abstract Relocation{T<:ObjectHandle}
 abstract RelocationRef{T<:ObjectHandle}
-
-# The size of the actual data contained in the section. This should exclude any
-# padding mandated by the file format e.g. due to alignment rules
-@mustimplement sectionsize(section::Section)
-
-# The offset of the section in the file
-@mustimplement sectionoffset(section::Section)
-
-# The address of the section in virtual memory
-@mustimplement sectionaddress(section::Section)
 
 # The name of the section
 @mustimplement sectionname(section::SectionRef)
@@ -121,9 +125,25 @@ abstract SymtabEntry{T<:ObjectHandle}
 
 function symname
 end
+function symbolvalue
+end
 
+symbolnum(x::SymbolRef) = symbolnum(deref(x))
+
+"""
+The size of the actual data contained in the section. This should exclude any
+padding mandated by the file format e.g. due to alignment rules
+"""
 sectionsize(x::SectionRef) = sectionsize(deref(x))
+
+"""
+The address of the section in virtual memory.
+"""
 sectionaddress(x::SectionRef) = sectionaddress(deref(x))
+
+"""
+The offset of the section in the file.
+"""
 sectionoffset(x::SectionRef) = sectionoffset(deref(x))
 
 handleT{T}(::Union{Type{SectionRef{T}}, Type{Section{T}}, Type{SymbolRef{T}},
@@ -141,9 +161,6 @@ end
 
 typealias SectionOrRef{T} Union{Section{T},SectionRef{T}}
 
-sectionsize(sect::SectionRef) = sectionsize(deref(sect))
-sectionoffset(sect::SectionRef) = sectionoffset(deref(sect))
-
 seek{T<:ObjectHandle,S}(oh::T, section::Section{S}) =
     (@assert T <: S; seek(oh,sectionoffset(section)))
 
@@ -157,6 +174,7 @@ function readbytes{T<:ObjectHandle,S}(oh::T,sec::Section{S})
     readbytes(oh, sectionsize(sec))
 end
 readbytes(sec::SectionRef) = readbytes(handle(sec),deref(sec))
+seek(x::SectionRef, off) = seek(handle(x), sectionoffset(x)+off)
 
 typealias Maybe{T} Union{T,Void}
 
@@ -181,7 +199,10 @@ function DebugSections{T}(oh::T; debug_abbrev = nothing, debug_aranges = nothing
     debug_frame = nothing, debug_info = nothing, debug_line = nothing,
     debug_macinfo = nothing, debug_pubnames = nothing, debug_loc= nothing,
     debug_ranges = nothing, debug_str = nothing, debug_types = nothing)
-    DebugSections(oh, debug_abbrev, debug_aranges, debug_frame, debug_info,
+    Sect = Union{map(typeof, [debug_abbrev, debug_aranges, debug_frame, debug_info,
+        debug_line, debug_loc, debug_macinfo, debug_pubnames, debug_ranges,
+        debug_str, debug_types])...}
+    DebugSections{T,Sect}(oh, debug_abbrev, debug_aranges, debug_frame, debug_info,
         debug_line, debug_loc, debug_macinfo, debug_pubnames, debug_ranges,
         debug_str, debug_types)
 end
@@ -309,5 +330,13 @@ read{T<:ObjectHandle}(oh::T, args...) = read(oh.io,args...)
 
 function getSectionLoadAddress
 end
+
+immutable LOIByName
+    addrs::Dict{Symbol, UInt64}
+end
+getSectionLoadAddress(LOI::LOIByName, x::Union{Symbol, AbstractString}) =
+    LOI.addrs[symbol(x)]
+getSectionLoadAddress(LOI::LOIByName, sec) =
+    getSectionLoadAddress(LOI, bytestring(sectionname(sec)))
 
 end # module

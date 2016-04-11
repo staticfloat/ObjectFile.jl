@@ -5,7 +5,8 @@ export ObjectHandle, SectionRef, SymbolRef, debugsections
 
 export printfield, printentry, printfield_with_color, deref,
     sectionaddress, sectionoffset, sectionsize, sectionname,
-    load_strtab, readmeta, StrTab, symname, Sections, symbolvalue
+    load_strtab, readmeta, StrTab, symname, Sections, symbolvalue,
+    isundef
 
 import Base: read, seek, readbytes, position, show, showcompact
 
@@ -123,12 +124,6 @@ deref(section::Section) = section
 abstract SymbolRef{T<:ObjectHandle}
 abstract SymtabEntry{T<:ObjectHandle}
 
-function symname
-end
-function symbolvalue
-end
-
-symbolnum(x::SymbolRef) = symbolnum(deref(x))
 
 """
 The size of the actual data contained in the section. This should exclude any
@@ -156,6 +151,15 @@ abstract StrTab
 function load_strtab
 end
 @mustimplement strtab_lookup(s::StrTab, offset)
+
+# Symbol properties
+function symname
+end
+function symbolvalue
+end
+
+symbolnum(x::SymbolRef) = symbolnum(deref(x))
+isundef(x::SymbolRef) = isundef(deref(x))
 
 ################################# Utilities ####################################
 
@@ -192,8 +196,8 @@ immutable DebugSections{T<:ObjectHandle, Sect}
     debug_ranges::Maybe{Sect}
     debug_str::Maybe{Sect}
     debug_types::Maybe{Sect}
-
 end
+handle(dbgs::DebugSections) = dbgs.oh
 
 function DebugSections{T}(oh::T; debug_abbrev = nothing, debug_aranges = nothing,
     debug_frame = nothing, debug_info = nothing, debug_line = nothing,

@@ -4,7 +4,7 @@ export ObjectHandle, SectionRef, SymbolRef, debugsections
 
 export printfield, printentry, printfield_with_color, deref,
     sectionaddress, sectionoffset, sectionsize, sectionname,
-    load_strtab, readmeta, StrTab
+    load_strtab, readmeta, StrTab, symname
 
 import Base: read, seek, readbytes, position, show
 
@@ -119,12 +119,17 @@ deref(section::Section) = section
 abstract SymbolRef{T<:ObjectHandle}
 abstract SymtabEntry{T<:ObjectHandle}
 
+function symname
+end
+
 sectionsize(x::SectionRef) = sectionsize(deref(x))
 sectionaddress(x::SectionRef) = sectionaddress(deref(x))
 sectionoffset(x::SectionRef) = sectionoffset(deref(x))
 
 handleT{T}(::Union{Type{SectionRef{T}}, Type{Section{T}}, Type{SymbolRef{T}},
     Type{SymtabEntry{T}}}) = T
+Base.read(s::SectionRef, args...) = read(handle(s), args...)
+Base.position(s::SectionRef) = position(handle(s)) - sectionoffset(s)
 
 abstract StrTab
 
@@ -143,6 +148,8 @@ seek{T<:ObjectHandle,S}(oh::T, section::Section{S}) =
     (@assert T <: S; seek(oh,sectionoffset(section)))
 
 seek(section::SectionRef) = seek(handle(section), deref(section))
+Base.eof(section::SectionRef) = eof(handle(section)) ||
+    (position(handle(section)) >= sectionoffset(section) + sectionsize(section))
 
 function readbytes{T<:ObjectHandle,S}(oh::T,sec::Section{S})
     @assert T <: S

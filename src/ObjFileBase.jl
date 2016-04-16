@@ -304,10 +304,10 @@ immutable MagicMismatch;
     message
 end
 
+const ObjHandles = Vector{Type}()
 function readmeta(io::IO)
-    ts = subtypes(ObjFileBase.ObjectHandle)
     pos = position(io)
-    for T in ts
+    for T in ObjHandles
         seek(io,pos)
         try
             return readmeta(io, T)

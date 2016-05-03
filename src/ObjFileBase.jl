@@ -144,6 +144,7 @@ sectionoffset(x::SectionRef) = sectionoffset(deref(x))
 handleT{T}(::Union{Type{SectionRef{T}}, Type{Section{T}}, Type{SymbolRef{T}},
     Type{SymtabEntry{T}}}) = T
 Base.read(s::SectionRef, args...) = read(handle(s), args...)
+Base.read{T}(s::SectionRef, ::Type{T}) = read(handle(s), T)::T
 Base.position(s::SectionRef) = position(handle(s)) - sectionoffset(s)
 
 abstract StrTab
@@ -329,6 +330,7 @@ end
 readmeta(file::AbstractString) = readmeta(open(file,"r"))
 
 read{T<:ObjectHandle}(oh::T, args...) = read(oh.io,args...)
+read{H<:ObjectHandle,T}(oh::H, ::Type{T}) = read(oh.io, T)::T
 
 # Others
 

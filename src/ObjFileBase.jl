@@ -89,6 +89,13 @@ function isrelocatable
 end
 
 """
+Determine whether an object file is an executable object file.
+"""
+function isexecutable
+end
+
+
+"""
 Turn a section name into the object-file specific naming convention.
 """
 function mangle_sname

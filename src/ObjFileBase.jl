@@ -8,7 +8,7 @@ export printfield, printentry, printfield_with_color, deref,
     load_strtab, readmeta, StrTab, symname, Sections, symbolvalue,
     isundef
 
-import Base: read, seek, readbytes, position, show, showcompact
+import Base: read, seek, readbytes, position, show, showcompact, readuntil
 
 ########## ObjFileBase.jl - Basic shared functionality for all object files ####
 #
@@ -112,7 +112,7 @@ end
 #   end
 ##
 
-abstract Sections
+abstract Sections{T<:ObjectHandle}
 abstract SectionRef{T<:ObjectHandle}
 abstract Section{T<:ObjectHandle}
 abstract Relocation{T<:ObjectHandle}
@@ -338,6 +338,7 @@ readmeta(file::AbstractString) = readmeta(open(file,"r"))
 
 read{T<:ObjectHandle}(oh::T, args...) = read(oh.io,args...)
 read{H<:ObjectHandle,T}(oh::H, ::Type{T}) = read(oh.io, T)::T
+readuntil{H<:ObjectHandle}(oh::H, x) = readuntil(oh.io, x)
 
 # Others
 

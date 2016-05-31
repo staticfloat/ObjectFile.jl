@@ -6,7 +6,7 @@ export ObjectHandle, SectionRef, SymbolRef, debugsections
 export printfield, printentry, printfield_with_color, deref,
     sectionaddress, sectionoffset, sectionsize, sectionname,
     load_strtab, readmeta, StrTab, symname, Sections, symbolvalue,
-    isundef
+    isundef, symbolnum, Symbols
 
 import Base: read, seek, readbytes, position, show, showcompact, readuntil
 
@@ -112,6 +112,7 @@ end
 #   end
 ##
 
+abstract Symbols{T<:ObjectHandle}
 abstract Sections{T<:ObjectHandle}
 abstract SectionRef{T<:ObjectHandle}
 abstract Section{T<:ObjectHandle}

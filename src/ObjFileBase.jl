@@ -8,7 +8,7 @@ export printfield, printentry, printfield_with_color, deref,
     load_strtab, readmeta, StrTab, symname, Sections, symbolvalue,
     isundef, symbolnum, Symbols
 
-import Base: read, seek, readbytes, position, show, showcompact, readuntil
+import Base: read, seek, readbytes, position, show, showcompact, readuntil, skip
 
 ########## ObjFileBase.jl - Basic shared functionality for all object files ####
 #
@@ -327,7 +327,7 @@ function readmeta(io::IO)
         end
     end
     error("""
-        Object file is not any of $(join(ts, ", "))!
+        Object file is not any of $(join(ObjHandles, ", "))!
         To force one object file use readmeta(io,T).
         If the format you want is not listed, make sure
         the appropriate pacakge is loaded before calling
@@ -340,7 +340,7 @@ readmeta(file::AbstractString) = readmeta(open(file,"r"))
 read{T<:ObjectHandle}(oh::T, args...) = read(oh.io,args...)
 read{H<:ObjectHandle,T}(oh::H, ::Type{T}) = read(oh.io, T)::T
 readuntil{H<:ObjectHandle}(oh::H, x) = readuntil(oh.io, x)
-
+skip{H<:ObjectHandle}(oh::H, x) = skip(oh.io, x)
 # Others
 
 function getSectionLoadAddress

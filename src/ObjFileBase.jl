@@ -77,6 +77,7 @@ readmeta{T<:ObjectHandle}(io::IO, ::Type{T}) =
 
 # Querying general properties
 @mustimplement endianness(oh::ObjectHandle)
+@mustimplement intptr(oh::ObjectHandle)
 
 # ObjectHandle IO interface
 @mustimplement seek(oh::ObjectHandle, args...)

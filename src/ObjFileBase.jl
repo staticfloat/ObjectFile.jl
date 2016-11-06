@@ -6,7 +6,7 @@ export ObjectHandle, SectionRef, SymbolRef, debugsections
 export printfield, printentry, printfield_with_color, deref,
     sectionaddress, sectionoffset, sectionsize, sectionname,
     load_strtab, readmeta, StrTab, symname, Sections, symbolvalue,
-    isundef, symbolnum, Symbols
+    isundef, symbolnum, Symbols, isBSS
 
 import Base: read, seek, readbytes, position, show, showcompact, readuntil, skip
 
@@ -170,6 +170,9 @@ end
 
 symbolnum(x::SymbolRef) = symbolnum(deref(x))
 isundef(x::SymbolRef) = isundef(deref(x))
+
+# Section properties
+isBSS(x::SectionRef) = isBSS(deref(x))
 
 ################################# Utilities ####################################
 

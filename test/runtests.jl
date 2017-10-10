@@ -1,5 +1,107 @@
-using ObjFileBase
+using ObjectFile
 using Base.Test
 
-# write your own tests here
-@test 1 == 1
+function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
+    # Actually read it in
+    oh_exe = readmeta(fooifier_path)
+    oh_lib = readmeta(libfoo_path)
+    
+    # Tease out some information from the containing folder name
+    dir_path = basename(dirname(libfoo_path))
+    const types = Dict(
+        "linux" => ELFHandle,
+        "mac" => MachOHandle,
+        "win" => COFFHandle,
+    )
+
+    H = types[dir_path[1:end-2]]
+    bits = dir_path[end-1:end]
+
+    @testset "$(dir_path)" begin
+        @testset "General Properties" begin
+            for oh in (oh_exe, oh_lib)
+                # Test that we got the right type
+                @test typeof(oh) <: H
+
+                # Test that we got the right number of bits
+                @test is64bit(oh) == (bits == "64")
+
+                # Everything is always little endian
+                @test endianness(oh) == :LittleEndian
+            end
+
+            # None of these are .o files
+            @test !isrelocatable(oh_exe)
+            @test !isrelocatable(oh_lib)
+
+            # Ensure these are the kinds of files we thought they were
+            @test isexecutable(oh_exe)
+            @test islibrary(oh_lib)
+        end
+
+        
+        @testset "Dynamic Linking" begin
+            # Ensure that `dir_path` is one of the RPath entries
+            rpath = RPath(oh_exe)
+            can_paths = canonical_rpaths(rpath)
+            @test abspath(dir_path) in can_paths
+
+            # Ensure that `fooifier` is going to try to load `libfoo`:
+            foo_libs = find_libraries(oh_exe)
+            @test !isempty(foo_libs)
+            @test abspath(libfoo_path) in values(foo_libs)
+        end
+
+        # Ensure that `foo()` is referenced in both, defined in `libfoo`, and
+        # not defined in `fooifier`.  Also ensure that `_main` is defined in
+        # `fooifier` and is not present in `libfoo`.
+        @testset "Symbols" begin
+            syms_exe = Symbols(oh_exe)
+            syms_lib = Symbols(oh_lib)
+
+            syms_names_exe = symbol_name.(collect(syms_exe))
+            syms_names_lib = symbol_name.(collect(syms_lib))
+
+            # ELF stores the symbol name as "foo", MachO stores it as "_foo"
+            foo_sym_name = mangle_symbol_name(oh_exe, "foo")
+            main_sym_name = mangle_symbol_name(oh_exe, "main")
+
+            @test foo_sym_name in syms_names_exe
+            @test foo_sym_name in syms_names_lib
+            @test main_sym_name in syms_names_exe
+            @test !(main_sym_name in syms_names_lib)
+
+            foo_idx_exe = findfirst(syms_names_exe .== foo_sym_name)
+            main_idx_exe = findfirst(syms_names_exe .== main_sym_name)
+            foo_idx_lib = findfirst(syms_names_lib .== foo_sym_name)
+
+            @test foo_idx_exe != 0
+            @test main_idx_exe != 0
+            @test foo_idx_lib != 0
+
+            # Global detection doesn't seem to be working on OSX...
+            @test isundef(syms_exe[foo_idx_exe])
+            @test !islocal(syms_exe[foo_idx_exe])
+            #@test isglobal(syms_exe[foo_idx_exe])
+
+            @test !isundef(syms_exe[main_idx_exe])
+            @test !islocal(syms_exe[main_idx_exe])
+            #@test isglobal(syms_exe[main_idx_exe])
+
+            @test !isundef(syms_lib[foo_idx_lib])
+            @test !islocal(syms_lib[foo_idx_lib])
+            #@test isglobal(syms_lib[foo_idx_lib])
+        end
+    end
+end
+
+# Run ELF tests
+test_libfoo_and_fooifier("./linux32/fooifier", "./linux32/libfoo.so")
+test_libfoo_and_fooifier("./linux64/fooifier", "./linux64/libfoo.so")
+
+# Run MachO tests
+test_libfoo_and_fooifier("./mac64/fooifier", "./mac64/libfoo.dylib")
+
+# Run COFF tests (Commented out until we get these working)
+#test_libfoo_and_fooifier("./win32/fooifier.exe", "./win32/libfoo.dll")
+#test_libfoo_and_fooifier("./win64/fooifier.exe", "./win64/libfoo.dll")

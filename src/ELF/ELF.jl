@@ -1,7 +1,6 @@
 module ELF
 
 using StructIO
-using Compat
 
 # Bring in ObjectFile definitions
 using ObjectFile

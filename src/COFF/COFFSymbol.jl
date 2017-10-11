@@ -43,7 +43,7 @@ function isundef(sym::COFFSymtabEntry)
         IMAGE_SYM_CLASS_UNDEFINED_LABEL,
         IMAGE_SYM_CLASS_UNDEFINED_STATIC) ||
     (sym.StorageClass == IMAGE_SYM_CLASS_EXTERNAL &&
-     sym.SectionNumber == IMAGE_SYM_UNDEFINED)
+     sym.SectionNumber == IMAGE_SYM_CLASS_NULL)
 end
 isglobal(sym::COFFSymtabEntry) = sym.StorageClass == IMAGE_SYM_CLASS_EXTERNAL
 islocal(sym::COFFSymtabEntry) = !isglobal(sym)

@@ -23,10 +23,10 @@ function unsafe_string(x::fixed_string{T}) where {T <: Integer}
     data_array = reinterpret(UInt8, [x.data])
     zero_idx = findfirst(data_array, 0)
     if zero_idx == 0
-        zero_idx = sizeof(T)
+        zero_idx = sizeof(T) + 1
     end
 
-    str = String(data_array[1:zero_idx])
+    str = String(data_array[1:zero_idx-1])
     if !isvalid(str)
         return "$(zero_idx)-byte String of invalid UTF-8 data"
     end

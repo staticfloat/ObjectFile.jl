@@ -27,7 +27,6 @@ string or an `strtab_lookup`.  If the latter, then perform the lookup
 """
 function fixed_string_lookup(oh::COFFHandle, name)
     if !isempty(name) && name[1] == '/'
-        @show name
         # Wow, COFF files are weird.
         strtab = StrTab(oh)
         return strtab_lookup(strtab, parse(Int, name[2:end]))

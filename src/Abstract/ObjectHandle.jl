@@ -2,7 +2,6 @@
 export ObjectHandle,
        readmeta,
        seek, seekstart, skip, start, iostream, position, read, readuntil, eof,
-       unpack,
        endianness, is64bit, isrelocatable, isexecutable, islibrary, 
        mangle_section_name, mangle_symbol_name, handle, header, format_string,
        section_header_offset, section_header_size, section_header_type,

@@ -1,5 +1,7 @@
 export MachHeader, MachHeader32, MachHeader64, MachFatArch, MachFatHeader
 
+import Base: show
+
 """
     MachHeader
 
@@ -77,4 +79,13 @@ function macho_endianness(magic::UInt32)
     else
         throw(MagicMismatch("Invalid Magic ($(hex(magic)))!"))
     end
+end
+
+function show(io::IO, header::MachOHeader)
+    println(io, "MachO Header")
+    println(io, "  CPU Type ", header.cputype)
+    println(io, "  CPU Subtype ", header.cpusubtype)
+    println(io, "  File Type ", header.filetype)
+    println(io, "  Number of load commands ", header.ncmds)
+    println(io, "  Flags ", header.flags)
 end

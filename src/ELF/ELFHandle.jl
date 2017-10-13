@@ -1,11 +1,8 @@
 # Export Datatypes
 export ELFHandle
 
-# Import FileIO methods
-#import FileIO: load, save, File
-
 # Import Base methods
-import Base: start, show, getindex
+import Base: start, getindex
 
 
 """

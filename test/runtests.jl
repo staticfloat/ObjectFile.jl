@@ -114,6 +114,9 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             # Show printing of a Handle
             tshow(oh_lib)
 
+            # Test showing of the header
+            tshow(header(oh_lib))
+
             # Test showing of Sections
             sects = Sections(oh_exe)
             tshow(sects)

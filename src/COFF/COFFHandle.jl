@@ -1,7 +1,5 @@
 export COFFHandle
 
-import Base: show
-
 """
     COFFHandle
 

@@ -1,5 +1,7 @@
 export COFFHeader
 
+import Base: show
+
 @io struct COFFHeader
     Machine::UInt16
     NumberOfSections::UInt16
@@ -31,3 +33,11 @@ isrelocatable(h::COFFHeader) = !isexecutable(h) && !islibrary(h)
 
 num_sections(h::COFFHeader) = h.NumberOfSections
 num_symbols(h::COFFHeader) = h.NumberOfSymbols
+
+function show(io::IO, header::COFFHeader)
+    println(io, "COFF Header")
+    println(io, "  Machine ", header.Machine)
+    println(io, "  Number of Sections ", header.NumberOfSections)
+    println(io, "  Time Date Stamp ", header.TimeDateStamp)
+    println(io, "  Number of Symbols ", header.NumberOfSymbols)
+end

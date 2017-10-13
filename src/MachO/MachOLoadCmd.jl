@@ -9,7 +9,7 @@ MachOLoadCmdHeader
 All MachO Load Commands have a common header, containing information about what
 kind of Load Command it is, and how large the load command is.
 """
-@io immutable MachOLoadCmdHeader{H <: MachOHandle}
+@io struct MachOLoadCmdHeader{H <: MachOHandle}
     cmd::UInt32
     cmdsize::UInt32
 end
@@ -66,7 +66,7 @@ Allows iteration over the LoadCmds within a Mach-O file.
 ### Convenience constructors
   - Segments()
 """
-immutable MachOLoadCmds{H <: MachOHandle}
+struct MachOLoadCmds{H <: MachOHandle}
     handle::H
     headers::Vector{MachOLoadCmdHeader{H}}
     cmds::Vector{MachOLoadCmd{H}}
@@ -79,7 +79,7 @@ end
 Datatype containing a Mach-O Load Command, its header, and a reference back to
 the `MachOLoadCmds` object it was garnered from
 """
-immutable MachOLoadCmdRef{H <: MachOHandle, C <: MachOLoadCmd{H}}
+struct MachOLoadCmdRef{H <: MachOHandle, C <: MachOLoadCmd{H}}
     lcs::MachOLoadCmds{H}
     header::MachOLoadCmdHeader{H}
     cmd::C

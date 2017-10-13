@@ -1,5 +1,5 @@
 # # # Higher level debug info support
-immutable DebugSections{T<:ObjectHandle, S}
+struct DebugSections{T<:ObjectHandle, S}
     oh::T
     debug_abbrev::Nullable{S}
     debug_aranges::Nullable{S}

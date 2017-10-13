@@ -7,7 +7,7 @@ Mach-O `Section` type, containing information about the section name, segment
 name, size, address, etc... of the `Section.`
 """
 abstract type MachOSection{H <: MachOHandle} <: Section{H} end
-@io immutable MachOSection32{H <: MachOHandle} <: MachOSection{H}
+@io struct MachOSection32{H <: MachOHandle} <: MachOSection{H}
     sectname::fixed_string{UInt128}
     segname::fixed_string{UInt128}
     addr::UInt32
@@ -21,7 +21,7 @@ abstract type MachOSection{H <: MachOHandle} <: Section{H} end
     reserved2::UInt32
 end
 
-@io immutable MachOSection64{H <: MachOHandle} <: MachOSection{H}
+@io struct MachOSection64{H <: MachOHandle} <: MachOSection{H}
     sectname::fixed_string{UInt128}
     segname::fixed_string{UInt128}
     addr::UInt64
@@ -60,7 +60,7 @@ multiple segments (in this case, realized as multiple load commands) which
 contain the necessary sections, and these sections can then be accessed as
 desired.
 """
-immutable MachOSections{H <: MachOHandle, S <: MachOSection} <: Sections{H}
+struct MachOSections{H <: MachOHandle, S <: MachOSection} <: Sections{H}
     handle::H
     sections::Vector{S}
 end
@@ -108,7 +108,7 @@ Sections(oh::MachOHandle) = Sections(Segments(oh))
 
 Mach-O `SectionRef` type
 """
-immutable MachOSectionRef{H <: MachOHandle} <: Sections{H}
+struct MachOSectionRef{H <: MachOHandle} <: Sections{H}
     sections::MachOSections{H}
     section::MachOSection{H}
     idx::UInt32

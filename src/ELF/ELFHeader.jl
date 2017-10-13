@@ -10,7 +10,7 @@ type, offsets for the Program and Section headers, the number of other header
 entries, etc...
 """
 abstract type ELFHeader{H <: ObjectHandle} end
-@io immutable ELFHeader32{H <: ObjectHandle} <: ELFHeader{H}
+@io struct ELFHeader32{H <: ObjectHandle} <: ELFHeader{H}
     e_type::UInt16
     e_machine::UInt16
     e_version::UInt32
@@ -25,7 +25,7 @@ abstract type ELFHeader{H <: ObjectHandle} end
     e_shnum::UInt16
     e_shstrndx::UInt16
 end
-@io immutable ELFHeader64{H <: ObjectHandle} <: ELFHeader{H}
+@io struct ELFHeader64{H <: ObjectHandle} <: ELFHeader{H}
     e_type::UInt16
     e_machine::UInt16
     e_version::UInt32

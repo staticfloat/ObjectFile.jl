@@ -1,6 +1,6 @@
 export COFFHeader
 
-@io immutable COFFHeader
+@io struct COFFHeader
     Machine::UInt16
     NumberOfSections::UInt16
     TimeDateStamp::UInt32

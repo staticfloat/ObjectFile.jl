@@ -2,7 +2,7 @@ abstract type Relocation{T<:ObjectHandle} end
 abstract type RelocationRef{T<:ObjectHandle} end
 
 
-immutable LOIByName
+struct LOIByName
     addrs::Dict{Symbol, UInt64}
 end
 function getSectionLoadAddress(LOI::LOIByName, x::Union{Symbol, AbstractString})

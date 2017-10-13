@@ -1,7 +1,7 @@
 export MachOHandle, FatMachOHandle
 import Base: show
 
-immutable MachOHandle{T <: IO} <: ObjectHandle
+struct MachOHandle{T <: IO} <: ObjectHandle
     # Backing IO and start point within the IOStream of this MachO object
     io::T
     start::Int

@@ -9,7 +9,7 @@ using StructIO
 A fixed-byte string, stored as an integer type (e.g. `T` = `UInt128`, or `T` =
 `UInt64`) but displayed and treated as a string.
 """
-@io immutable fixed_string{T <: Integer}
+@io struct fixed_string{T <: Integer}
     data::T
 end
 

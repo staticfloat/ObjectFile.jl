@@ -1,6 +1,6 @@
 export ELFInternal
 
-@io immutable ELFInternal
+@io struct ELFInternal
     # ELF object class (32bit/64bit)
     class::UInt8
 

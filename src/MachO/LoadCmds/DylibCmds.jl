@@ -14,9 +14,9 @@ around the problem by creating the `Stub` which contains the data which can be
 read in by `StructIO` nicely, and then immediately expanding and reading in the
 `LCStr` afterward within the "true" `MachOLoadDylibCmd`.
 """
-@io immutable MachODylibStub
+@io struct MachODylibStub
     # Note this `offset` is technically a part of the `dylib` union, but we
-    # don't bother to split it out into its own `immutable`.
+    # don't bother to split it out into its own `struct`.
     name_offset::UInt32
     timestamp::UInt32
     current_version::UInt32
@@ -39,7 +39,7 @@ follows:
   - dylib_version()
   - dylib_compatibility()
 """
-immutable MachOLoadDylibCmd{H <: MachOHandle} <: MachOLoadCmd{H}
+struct MachOLoadDylibCmd{H <: MachOHandle} <: MachOLoadCmd{H}
     stub::MachODylibStub
     name::String
 end
@@ -55,7 +55,7 @@ particular shared library.  The API of this object is identical to that of the
 semantic meaning behind the data that changes, and so this object is all but a
 typealias for `MachOLoadDylibCmd`.
 """
-immutable MachOIdDylibCmd{H <: MachOHandle} <: MachOLoadCmd{H}
+struct MachOIdDylibCmd{H <: MachOHandle} <: MachOLoadCmd{H}
     stub::MachODylibStub
     name::String
 end
@@ -129,7 +129,7 @@ dylib_compatibilty(cmd::DylibCmd) = cmd.stub.compatibilty
 
 The Load Command that holds the RPATH of this object.
 """
-immutable MachORPathCmd{H <: MachOHandle} <: MachOLoadCmd{H}
+struct MachORPathCmd{H <: MachOHandle} <: MachOLoadCmd{H}
     rpath_offset::UInt32
     rpath::String
 end

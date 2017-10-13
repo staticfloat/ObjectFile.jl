@@ -6,7 +6,7 @@ export COFFStrTab
 COFF `StrTab` type, containing the metadata necessary to perform string table
 lookups, via the `strtab_lookup()` method.
 """
-immutable COFFStrTab{H <: COFFHandle} <: StrTab{H}
+struct COFFStrTab{H <: COFFHandle} <: StrTab{H}
     handle::COFFHandle
     offset::UInt32
 end

@@ -1,4 +1,4 @@
-immutable MachOStrTab{H <: MachOHandle} <: StrTab{H}
+struct MachOStrTab{H <: MachOHandle} <: StrTab{H}
     cmd::MachOLoadCmdRef{H,MachOSymtabCmd{H}}
 end
 

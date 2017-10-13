@@ -1,6 +1,6 @@
 export MachODynamicLinks, MachODynamicLink, MachORPath
 
-immutable MachODynamicLinks{H <: MachOHandle, C <: MachOLoadCmdRef{H,MachOLoadDylibCmd{H}}} <: DynamicLinks{H}
+struct MachODynamicLinks{H <: MachOHandle, C <: MachOLoadCmdRef{H,MachOLoadDylibCmd{H}}} <: DynamicLinks{H}
     handle::H
     cmds::Vector{C}
 end
@@ -28,7 +28,7 @@ dynamic dependencies.  Although Mach-O encodes more than just the path of the
 dependency, in order to get at it you will need to dig into the LoadCmd that
 describes it.
 """
-immutable MachODynamicLink{H <: MachOHandle} <: DynamicLink{H}
+struct MachODynamicLink{H <: MachOHandle} <: DynamicLink{H}
     dls::MachODynamicLinks
     cmd_ref::MachOLoadCmdRef{H,MachOLoadDylibCmd{H}}
 end
@@ -38,7 +38,7 @@ handle(dl::MachODynamicLink) = handle(DynamicLinks(dl))
 path(dl::MachODynamicLink) = dylib_name(deref(dl.cmd_ref))
 
 
-immutable MachORPath{H <: MachOHandle} <: RPath{H}
+struct MachORPath{H <: MachOHandle} <: RPath{H}
     handle::H
     cmds::Vector
 end

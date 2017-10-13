@@ -1,12 +1,12 @@
 export COFFDynamicLinks, COFFDynamicLink, COFFRPath
 
-immutable COFFDynamicLink{H <: COFFHandle} <: DynamicLink{H}
+struct COFFDynamicLink{H <: COFFHandle} <: DynamicLink{H}
     path::String
 end
 path(dl::COFFDynamicLink) = dl.path
 
 
-@io immutable COFFImageImportDescriptor
+@io struct COFFImageImportDescriptor
     Characteristics::UInt32
     TimeDateStamp::UInt32
     ForwarderChain::UInt32
@@ -14,7 +14,7 @@ path(dl::COFFDynamicLink) = dl.path
     FirstThunk::UInt32
 end
 
-immutable COFFDynamicLinks{H <: COFFHandle} <: DynamicLinks{H}
+struct COFFDynamicLinks{H <: COFFHandle} <: DynamicLinks{H}
     handle::H
     links::Vector
 end
@@ -61,7 +61,7 @@ they _do_ seach the same directory as the loading binary (e.g. the `\$ORIGIN`).
 We use `COFFRPath` to effect this, although strictly speaking there is no such
 thing as a "COFF RPath".
 """
-immutable COFFRPath{H <: COFFHandle} <: RPath{H}
+struct COFFRPath{H <: COFFHandle} <: RPath{H}
     handle::H
 end
 

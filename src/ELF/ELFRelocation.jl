@@ -1,23 +1,23 @@
 abstract type ELFRel{H <: ELFHandle} end
 abstract type ELFRela{H <: ELFHandle} end
 
-@io immutable ELFRel32{H <: ELFHandle} <: ELFRel{H}
+@io struct ELFRel32{H <: ELFHandle} <: ELFRel{H}
     r_offset::UInt32
     r_info::UInt32
 end
 
-@io immutable ELFRela32{H <: ELFHandle} <: ELFRela{H}
+@io struct ELFRela32{H <: ELFHandle} <: ELFRela{H}
     r_offset::UInt32
     r_info::UInt32
     r_addend::Int32
 end
 
-@io immutable ELFRel64{H <: ELFHandle} <: ELFRel{H}
+@io struct ELFRel64{H <: ELFHandle} <: ELFRel{H}
     r_offset::UInt64
     r_info::UInt64
 end
 
-@io immutable ELFRela64{H <: ELFHandle} <: ELFRela{H}
+@io struct ELFRela64{H <: ELFHandle} <: ELFRela{H}
     r_offset::UInt64
     r_info::UInt64
     r_addend::Int64
@@ -25,7 +25,7 @@ end
 
 
 # Access to relocations
-immutable Relocations{T <: ELFRel, S <: SectionRef}
+struct Relocations{T <: ELFRel, S <: SectionRef}
     sec::S
 end
 function Relocations(sec::SectionRef)
@@ -34,7 +34,7 @@ function Relocations(sec::SectionRef)
     Relocations{is64 ? (isRela ? ELF64.Rela : ELF64.Rel) : (isRela ? ELF32.Rela : ELF32.Rel),typeof(sec)}(sec)
 end
 
-immutable RelocationRef{T <: ELFRel} <: ObjFileBase.RelocationRef{ELFHandle}
+struct RelocationRef{T <: ELFRel} <: ObjFileBase.RelocationRef{ELFHandle}
     h::ELFHandle
     reloc::T
 end
@@ -71,7 +71,7 @@ r_type(x) = r_type(deref(x))
 addend(x) = addend(deref(x))
 
 # The relocation to apply
-immutable RelocToApply
+struct RelocToApply
     value::UInt64
     size::UInt8
 end

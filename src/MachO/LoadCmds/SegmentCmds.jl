@@ -28,7 +28,7 @@ itself directly.
   - segment_num_sections()
 """
 abstract type MachOSegmentCmd{H <: MachOHandle} <: MachOLoadCmd{H} end 
-@io immutable MachOSegment32Cmd{H <: MachOHandle} <: MachOSegmentCmd{H}
+@io struct MachOSegment32Cmd{H <: MachOHandle} <: MachOSegmentCmd{H}
     segname::fixed_string{UInt128}
     vmaddr::UInt32
     vmsize::UInt32
@@ -40,7 +40,7 @@ abstract type MachOSegmentCmd{H <: MachOHandle} <: MachOLoadCmd{H} end
     flags::UInt32
 end
 
-@io immutable MachOSegment64Cmd{H <: MachOHandle} <: MachOSegmentCmd{H}
+@io struct MachOSegment64Cmd{H <: MachOHandle} <: MachOSegmentCmd{H}
     segname::fixed_string{UInt128}
     vmaddr::UInt64
     vmsize::UInt64

@@ -18,13 +18,13 @@ structure that contains more information.  (E.g. for a `DT_NEEDED` entry,
 """
 abstract type ELFDynEntry{H <: ELFHandle} end
 
-@io immutable ELFDynEntry32{H <: ELFHandle} <: ELFDynEntry{H}
+@io struct ELFDynEntry32{H <: ELFHandle} <: ELFDynEntry{H}
     d_tag::UInt32
     # We drop the `d_un` union, and use only `d_val`, omitting `d_ptr`.
     d_val::UInt32
 end
 
-@io immutable ELFDynEntry64{H <: ELFHandle} <: ELFDynEntry{H}
+@io struct ELFDynEntry64{H <: ELFHandle} <: ELFDynEntry{H}
     d_tag::UInt64
     # We drop the `d_un` union, and use only `d_val`, omitting `d_ptr`.
     d_val::UInt64
@@ -73,7 +73,7 @@ function dyn_entry_type_string(d::ELFDynEntry)
     return string("Unknown DynEntry Type (0x", hex(d_type), ")")
 end
 
-immutable ELFDynEntryRef{H <: ELFHandle}
+struct ELFDynEntryRef{H <: ELFHandle}
     section_ref::SectionRef{H}
     entry::ELFDynEntry{H}
 end

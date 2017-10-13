@@ -6,7 +6,7 @@ export MachOSegments, MachOSegment, MachOSegmentRef
 `Segments` type that contains all load commands within a Mach-O file that
 contain segment commands.
 """
-immutable MachOSegments{H <: MachOHandle, S <: MachOLoadCmdRef} <: Segments{H}
+struct MachOSegments{H <: MachOHandle, S <: MachOLoadCmdRef} <: Segments{H}
     handle::H
     segments::Vector{S}
 end
@@ -36,7 +36,7 @@ conformity; all the real work is done within `MachOSegmentCmd`; but since that
 already inherits from `MachOLoadCmd`, it cannot also inherit from `Segment`.
 Thus, this wrapper type was born to bridge the type hierarchy.
 """
-immutable MachOSegment{H <: MachOHandle, S <: MachOSegmentCmd{H}} <: Segment{H}
+struct MachOSegment{H <: MachOHandle, S <: MachOSegmentCmd{H}} <: Segment{H}
     seg::MachOLoadCmdRef{H,S}
 end
 
@@ -63,7 +63,7 @@ already inherits from `MachOLoadCmd`, and we needed a `MachOSegment` type that
 would inherit from `Segment`, we figured might as well make a `MachOSegmentRef`
 as well to keep things nice and symmetric.
 """
-immutable MachOSegmentRef{H <: MachOHandle} <: SegmentRef{H}
+struct MachOSegmentRef{H <: MachOHandle} <: SegmentRef{H}
     segments::MachOSegments{H}
     segment::MachOSegment{H}
     idx::UInt32

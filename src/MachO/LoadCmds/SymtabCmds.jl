@@ -1,4 +1,4 @@
-@io immutable MachOSymtabCmd{H <: MachOHandle} <: MachOLoadCmd{H}
+@io struct MachOSymtabCmd{H <: MachOHandle} <: MachOLoadCmd{H}
     symoff::UInt32
     nsyms::UInt32
     stroff::UInt32
@@ -24,7 +24,7 @@ function strtab_lookup(cmd::MachOLoadCmdRef{H,MachOSymtabCmd{H}}, index) where {
 end
 
 # We don't actually use this yet, but it doesn't hurt to have it here
-@io immutable MachODySymtabCmd{H <: MachOHandle} <: MachOLoadCmd{H}
+@io struct MachODySymtabCmd{H <: MachOHandle} <: MachOLoadCmd{H}
     ilocalsym::UInt32
     nlocalsym::UInt32
     iextdefsym::UInt32

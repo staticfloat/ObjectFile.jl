@@ -6,7 +6,7 @@ export Segments, ELFSegments, ELFSegment, ELFSegment32, ELFSegment64
 ELF segment header table type, containing information about the number of
 segments within the ELF object, the location of the segment headers, etc...
 """
-immutable ELFSegments{H <: ELFHandle}
+struct ELFSegments{H <: ELFHandle}
     handle::H
 end
 Segments(oh::ELFHandle) = ELFSegments(oh)
@@ -42,7 +42,7 @@ about the virtual memory layout of a chunk of the program.
 """
 abstract type ELFSegment{H <: ELFHandle} <: Segment{H} end
 
-@io immutable ELFSegment32{H <: ELFHandle} <: ELFSegment{H}
+@io struct ELFSegment32{H <: ELFHandle} <: ELFSegment{H}
     p_type::UInt32
     p_offset::UInt32
     p_vaddr::UInt32
@@ -53,7 +53,7 @@ abstract type ELFSegment{H <: ELFHandle} <: Segment{H} end
     p_align::UInt32
 end
 
-@io immutable ELFSegment64{H <: ELFHandle} <: ELFSegment{H}
+@io struct ELFSegment64{H <: ELFHandle} <: ELFSegment{H}
     p_type::UInt32
     p_flags::UInt32
     p_offset::UInt64
@@ -129,7 +129,7 @@ passthroughs to the underlying `Segment` API calls for ease of use.
   - segment_virtual_address()
   - segment_number()
 """
-immutable ELFSegmentRef{H<:ELFHandle} <: SegmentRef{H}
+struct ELFSegmentRef{H<:ELFHandle} <: SegmentRef{H}
     segments::ELFSegments{H}
     segment::ELFSegment{H}
     idx::UInt32

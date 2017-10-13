@@ -14,7 +14,7 @@ import Base: start, show, getindex
 An `ObjectHandle` subclass for ELF files, this is the primary object by which
 client applications will interact with ELF files.
 """
-immutable ELFHandle{T<:IO} <: ObjectHandle
+struct ELFHandle{T<:IO} <: ObjectHandle
     # Backing IOS and start point within the IOStream of this ELF object
     io::T
     start::Int

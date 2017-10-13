@@ -8,7 +8,7 @@ import Base: show
 An `ObjectHandle` subclass for COFF files, this is the primary object by which
 client applications will interact with COFF files.
 """
-immutable COFFHandle{T<:IO} <: ObjectHandle
+struct COFFHandle{T<:IO} <: ObjectHandle
     # Backing IOS and start point within the IOStream of this COFF object
     io::T
     start::Int

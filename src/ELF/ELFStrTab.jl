@@ -7,7 +7,7 @@ ELF string table type, containing information about a `Section` that contains
 a string table.  Note that an ELF file may contain multiple string tables, use
 the different constructors to reference the different string tables.
 """
-immutable ELFStrTab{H <: ELFHandle} <: StrTab{H}
+struct ELFStrTab{H <: ELFHandle} <: StrTab{H}
     section_ref::SectionRef{H}
 
     # Do a little bit of section checking

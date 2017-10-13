@@ -2,7 +2,7 @@ export COFFOptionalHeaderStandard, COFFImageDataDirectory, COFFDataDirectories,
        COFFOptionalHeaderWindows32, COFFOptionalHeaderWindows64,
        COFFOptionalHeader32, COFFOptionalHeader64
 
-@io immutable COFFOptionalHeaderStandard
+@io struct COFFOptionalHeaderStandard
     Magic::UInt16
     MajorLinkerVersion::UInt8
     MinorLinkerVersion::UInt8
@@ -15,12 +15,12 @@ end
 const OPTHEADER_STANDARD_MAGIC32 = 0x10b
 const OPTHEADER_STANDARD_MAGIC64 = 0x20b
 
-@io immutable COFFImageDataDirectory
+@io struct COFFImageDataDirectory
     VirtualAddress::UInt32
     Size::UInt32
 end
 
-@io immutable COFFDataDirectories
+@io struct COFFDataDirectories
     ExportTable::COFFImageDataDirectory
     ImportTable::COFFImageDataDirectory
     ResourceTable::COFFImageDataDirectory
@@ -39,7 +39,7 @@ end
     Reserverd::COFFImageDataDirectory
 end
 
-@io immutable COFFOptionalHeaderWindows32
+@io struct COFFOptionalHeaderWindows32
     ImageBase::UInt32
     SectionAlignment::UInt32
     FileAlignment::UInt32
@@ -63,7 +63,7 @@ end
     NumberOfRvaAndSizes::UInt32
 end
 
-@io immutable COFFOptionalHeaderWindows64
+@io struct COFFOptionalHeaderWindows64
     ImageBase::UInt64
     SectionAlignment::UInt32
     FileAlignment::UInt32
@@ -88,14 +88,14 @@ end
 end
 
 abstract type COFFOptionalHeader end
-@io immutable COFFOptionalHeader32 <: COFFOptionalHeader
+@io struct COFFOptionalHeader32 <: COFFOptionalHeader
     standard::COFFOptionalHeaderStandard
     BaseOfData::UInt32
     windows::COFFOptionalHeaderWindows32
     directories::COFFDataDirectories
 end
 
-@io immutable COFFOptionalHeader64 <: COFFOptionalHeader
+@io struct COFFOptionalHeader64 <: COFFOptionalHeader
     standard::COFFOptionalHeaderStandard
     windows::COFFOptionalHeaderWindows64
     directories::COFFDataDirectories

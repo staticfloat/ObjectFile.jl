@@ -6,7 +6,7 @@ export MachOSymtabEntry, MachOSymbolRef, MachOSymbols
 MachO Symbol Table entry type, internally represented as an `nlist` type.
 """
 abstract type MachOSymtabEntry{H <: MachOHandle} <: SymtabEntry{H} end
-@io immutable nlist{H <: MachOHandle} <: MachOSymtabEntry{H}
+@io struct nlist{H <: MachOHandle} <: MachOSymtabEntry{H}
     n_strx::UInt32
     n_type::UInt8
     n_sect::UInt8
@@ -14,7 +14,7 @@ abstract type MachOSymtabEntry{H <: MachOHandle} <: SymtabEntry{H} end
     n_value::UInt32
 end
 
-@io immutable nlist_64{H <: MachOHandle} <: MachOSymtabEntry{H}
+@io struct nlist_64{H <: MachOHandle} <: MachOSymtabEntry{H}
     n_strx::UInt32
     n_type::UInt8
     n_sect::UInt8
@@ -49,7 +49,7 @@ end
 
 MachO container type for `SymtabEntry` objects.
 """
-immutable MachOSymbols{H <: MachOHandle} <: Symbols{H}
+struct MachOSymbols{H <: MachOHandle} <: Symbols{H}
     cmd::MachOLoadCmdRef{H,MachOSymtabCmd{H}}
 end
 
@@ -102,7 +102,7 @@ associated symbol string table.
 StrTab(syms::MachOSymbols) = StrTab(syms.cmd)
 
 
-immutable MachOSymbolRef{H <: MachOHandle} <: SymbolRef{H}
+struct MachOSymbolRef{H <: MachOHandle} <: SymbolRef{H}
     syms::MachOSymbols{H}
     entry::MachOSymtabEntry{H}
     idx::UInt32

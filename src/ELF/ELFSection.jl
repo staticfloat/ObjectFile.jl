@@ -9,7 +9,7 @@ export section_type
 ELF Section header table type, containing information about the number of
 sections within the ELF object, the location of the section headers, etc...
 """
-immutable ELFSections{H <: ELFHandle} <: Sections{ELFHandle}
+struct ELFSections{H <: ELFHandle} <: Sections{ELFHandle}
     handle::H
 end
 
@@ -27,7 +27,7 @@ ELF Section type, containing information about a `Section` within the ELF
 object, such as the `Section`'s name, its size, etc...
 """
 abstract type ELFSection{H <: ELFHandle} <: Section{H} end
-@io immutable ELFSection32{H <: ELFHandle} <: ELFSection{H}
+@io struct ELFSection32{H <: ELFHandle} <: ELFSection{H}
     sh_name::UInt32
     sh_type::UInt32
     sh_flags::UInt32
@@ -39,7 +39,7 @@ abstract type ELFSection{H <: ELFHandle} <: Section{H} end
     sh_addralign::UInt32
     sh_entsize::UInt32
 end
-@io immutable ELFSection64{H <: ELFHandle} <: ELFSection{H}
+@io struct ELFSection64{H <: ELFHandle} <: ELFSection{H}
     sh_name::UInt32
     sh_type::UInt32
     sh_flags::UInt64
@@ -72,7 +72,7 @@ section_address(s::ELFSection) = s.sh_addr
 
 ELF `SectionRef` type, containing an `ELFSection` and important metadata.
 """
-immutable ELFSectionRef{H<:ELFHandle} <: SectionRef{H}
+struct ELFSectionRef{H<:ELFHandle} <: SectionRef{H}
     sections::ELFSections{H}
     section::ELFSection{H}
     idx::UInt32

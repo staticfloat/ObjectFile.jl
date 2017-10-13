@@ -11,7 +11,7 @@ COFF symbol table, contains the list of symbols defined within the object file.
 Note that because COFF Symbols are variable-length, we store a table of offsets
 at which the (non-auxilliary) symbols can be found.
 """
-immutable COFFSymbols{H<:COFFHandle} <: Symbols{H}
+struct COFFSymbols{H<:COFFHandle} <: Symbols{H}
     handle::H
     symbol_offsets::Vector{UInt64}
 end
@@ -64,7 +64,7 @@ endof(syms::COFFSymbols) = num_symbols(header(handle(syms)))
 # because it tries to pre-allocate an array of the proper size.
 # iteratorsize(::Type{H}) where {H <: COFFSymbols} = SizeUnknown()
 
-@io immutable COFFSymtabEntry{H <: COFFHandle} <: SymtabEntry{H}
+@io struct COFFSymtabEntry{H <: COFFHandle} <: SymtabEntry{H}
     Name::fixed_string{UInt64}
     Value::UInt32
     SectionNumber::Int16
@@ -103,7 +103,7 @@ isweak(sym::COFFSymtabEntry) = sym.StorageClass == IMAGE_SYM_CLASS_WEAK_EXTERNAL
 
 Contains a reference to an `COFFSymtabEntry`, as well as an `COFFSymbols`, etc...
 """
-immutable COFFSymbolRef{H<:COFFHandle} <: SymbolRef{H}
+struct COFFSymbolRef{H<:COFFHandle} <: SymbolRef{H}
     syms::COFFSymbols{H}
     entry::COFFSymtabEntry{H}
     idx::UInt32

@@ -63,7 +63,7 @@ function read(io::IO,f::ELFFile,debug_info::ELFSectionHeader,debug_abbrev::ELFSe
 end
 =#
 
-immutable dl_phdr_info
+struct dl_phdr_info
     dlpi_addr::UInt64
     dlpi_name::Ptr{UInt8}
     dlpi_phdr::Ptr{Void}

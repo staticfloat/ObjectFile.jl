@@ -5,7 +5,7 @@ export ELFSymbols, ELFSymtabEntry, ELFSymtabEntry64, ELFSymtabEntry32, ELFSymbol
 
 ELF symbol table, contains the list of symbols defined within the object file.
 """
-immutable ELFSymbols{H<:ELFHandle} <: Symbols{H}
+struct ELFSymbols{H<:ELFHandle} <: Symbols{H}
     section_ref::SectionRef{H}
 end
 
@@ -75,7 +75,7 @@ this ELF file, garnered from the symbol table (symtab)
 """
 abstract type ELFSymtabEntry{H <: ELFHandle} <: SymtabEntry{H} end
 
-@io immutable ELFSymtabEntry32{H <: ELFHandle} <: ELFSymtabEntry{H}
+@io struct ELFSymtabEntry32{H <: ELFHandle} <: ELFSymtabEntry{H}
     st_name::UInt32
     st_value::UInt32
     st_size::UInt32
@@ -84,7 +84,7 @@ abstract type ELFSymtabEntry{H <: ELFHandle} <: SymtabEntry{H} end
     st_shndx::UInt16
 end
 
-@io immutable ELFSymtabEntry64{H <: ELFHandle} <: ELFSymtabEntry{H}
+@io struct ELFSymtabEntry64{H <: ELFHandle} <: ELFSymtabEntry{H}
     st_name::UInt32
     st_info::UInt8
     st_other::UInt8
@@ -122,7 +122,7 @@ isweak(sym::ELFSymtabEntry) = (st_bind(sym.st_info) & STB_WEAK) != 0
 
 Contains a reference to an `ELFSymtabEntry`, as well as an `ELFSymbols`, etc...
 """
-immutable ELFSymbolRef{H<:ELFHandle} <: SymbolRef{H}
+struct ELFSymbolRef{H<:ELFHandle} <: SymbolRef{H}
     syms::ELFSymbols{H}
     entry::ELFSymtabEntry{H}
     idx::UInt32

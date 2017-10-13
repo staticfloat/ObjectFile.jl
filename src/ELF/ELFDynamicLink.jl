@@ -12,7 +12,7 @@ import Base: getindex, show
 ELF dynamic linkage table, contains the list dynamic loader commands, see the
 `ELFDynEntry` type for an opaque and unhelpful detailing of these commands.
 """
-immutable ELFDynamicLinks{H <: ELFHandle} <: DynamicLinks{H}
+struct ELFDynamicLinks{H <: ELFHandle} <: DynamicLinks{H}
     section_ref::SectionRef{H}
     links::Vector
 end
@@ -63,7 +63,7 @@ function StrTab(dls::ELFDynamicLinks{H}) where {H <: ELFHandle}
 end
 
 
-immutable ELFDynamicLink{H <: ELFHandle} <: DynamicLink{H}
+struct ELFDynamicLink{H <: ELFHandle} <: DynamicLink{H}
     dls::ELFDynamicLinks{H}
     dyn_entry::ELFDynEntryRef{H}
 end
@@ -87,7 +87,7 @@ end
 
 Stores the RPath entries from an ELF object
 """
-immutable ELFRPath{H <: ELFHandle} <: RPath{H}
+struct ELFRPath{H <: ELFHandle} <: RPath{H}
     section_ref::SectionRef{H}
     rpath::Vector
 end

@@ -8,7 +8,7 @@ its CPU target, the number of Load Commands within the file, etc...
 """
 abstract type MachOHeader{H <: ObjectHandle} end
 
-@io immutable MachOHeader32{H <: ObjectHandle} <: MachOHeader{H}
+@io struct MachOHeader32{H <: ObjectHandle} <: MachOHeader{H}
     magic::UInt32
     cputype::UInt32
     cpusubtype::UInt32
@@ -18,7 +18,7 @@ abstract type MachOHeader{H <: ObjectHandle} end
     flags::UInt32
 end
 
-@io immutable MachOHeader64{H <: ObjectHandle} <: MachOHeader{H}
+@io struct MachOHeader64{H <: ObjectHandle} <: MachOHeader{H}
     magic::UInt32
     cputype::UInt32
     cpusubtype::UInt32

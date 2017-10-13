@@ -4,7 +4,7 @@
 COFF Section header table type, containing information about the number of
 sections within the COFF object, the location of the section headers, etc...
 """
-immutable COFFSections{H <: COFFHandle} <: Sections{COFFHandle}
+struct COFFSections{H <: COFFHandle} <: Sections{COFFHandle}
     handle::H
 end
 
@@ -21,7 +21,7 @@ endof(sections::COFFSections) = num_sections(header(handle(sections)))
 COFF Section header type, containing information about a `Section` of the COFF
 file such as its name, its size, location within memory, etc...
 """
-@io immutable COFFSection{H <: COFFHandle} <: Section{H}
+@io struct COFFSection{H <: COFFHandle} <: Section{H}
     Name::fixed_string{UInt64}
     VirtualSize::UInt32
     VirtualAddress::UInt32
@@ -53,7 +53,7 @@ section_offset(s::COFFSection) = s.PointerToRawData
 
 COFF `SectionRef` type, containing a `COFFSection` and important metadata..
 """
-immutable COFFSectionRef{H <: COFFHandle} <: SectionRef{H}
+struct COFFSectionRef{H <: COFFHandle} <: SectionRef{H}
     sections::COFFSections{H}
     section::COFFSection{H}
     idx::UInt32

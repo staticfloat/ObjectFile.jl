@@ -81,8 +81,15 @@ isrelocatable(oh::COFFHandle) = isrelocatable(header(oh))
 isexecutable(oh::COFFHandle) = isexecutable(header(oh))
 islibrary(oh::COFFHandle) = islibrary(header(oh))
 mangle_section_name(oh::COFFHandle, name::AbstractString) = string(".", name)
-mangle_symbol_name(oh::COFFHandle, name::AbstractString) = name
-
+function mangle_symbol_name(oh::COFFHandle, name::AbstractString)
+    # sob
+    if is64bit(oh)
+        return name
+    else
+        return string("_", name)
+    end
+end
+format_string(::Type{H}) where {H <: COFFHandle} = "COFF"
 
 ## Section information
 function section_header_offset(oh::COFFHandle)
@@ -102,3 +109,6 @@ function strtab_offset(oh::H) where {H <: COFFHandle}
     h = header(oh)
     return h.PointerToSymbolTable + h.NumberOfSymbols*symtab_entry_size(oh)
 end
+
+### Misc. stuff
+path(oh::COFFHandle) = oh.path

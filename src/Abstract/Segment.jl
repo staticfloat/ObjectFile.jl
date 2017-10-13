@@ -191,3 +191,8 @@ Return the index of the referred segment.
 @derefmethod segment_file_size(seg::SegmentRef)
 @derefmethod segment_memory_size(seg::SegmentRef)
 @derefmethod segment_address(seg::SegmentRef)
+
+
+
+## Printing
+show(io::IO, segs::Segments{H}) where {H <: ObjectHandle} = show_collection(io, segs, H)

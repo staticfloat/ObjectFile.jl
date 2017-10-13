@@ -110,27 +110,3 @@ function section_type_string(s::ELFSection)
     return string("Unknown Section Type (0x", hex(sh_type), ")")
 end
 @derefmethod section_type_string(s::ELFSectionRef)
-
-function show(io::IO, section::Union{ELFSection,ELFSectionRef})
-    is64bit = isa(deref(section), ELFSection64)
-    print(io, "ELFSection", is64bit ? " (64 bit)": "")
-
-    if !get(io, :compact, false)
-        println(io)
-        println(io, "       Name: $(section_name(section))")
-        println(io, "       Type: $(section_type_string(section))")
-        println(io, "       Size: 0x$(hex(section_size(section)))")
-        println(io, "     Offset: 0x$(hex(section_offset(section)))")
-        print(io,   "    Address: 0x$(hex(section_address(section)))")
-    else
-        print(io, " $(section_type_string(section)), \"$(section_name(section))\"")
-    end
-end
-
-function show(io::IO, sections::ELFSections)
-    print(io, "ELF Section Table")
-    for s in sections
-        print(io, "\n  ")
-        showcompact(io, s)
-    end
-end

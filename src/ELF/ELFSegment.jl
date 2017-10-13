@@ -145,6 +145,7 @@ Segments(seg::ELFSegmentRef) = seg.segments
 segment_number(seg::ELFSegmentRef) = seg.idx
 @derefmethod segment_physical_address(seg::ELFSegmentRef)
 @derefmethod segment_virtual_address(seg::ELFSegmentRef)
+@derefmethod segment_type(seg::ELFSegmentRef)
 
 
 
@@ -166,8 +167,7 @@ end
 @derefmethod segment_type_string(s::ELFSegmentRef)
 
 function show(io::IO, seg::Union{ELFSegment,ELFSegmentRef})
-    is64bit = isa(deref(seg), ELFSegment64)
-    print(io, "ELFSegment", is64bit ? " (64 bit)": "")
+    print(io, "ELFSegment")
 
     if !get(io, :compact, false)
         fsz = hex(segment_file_size(seg))
@@ -182,13 +182,5 @@ function show(io::IO, seg::Union{ELFSegment,ELFSegmentRef})
         print(io,   "    Address:  (Phy: 0x$(paddr) Virt: 0x$(vaddr))")
     else
         print(io, " $(segment_type_string(seg))")
-    end
-end
-
-function show(io::IO, segments::ELFSegments)
-    print(io, "ELF Segment Table")
-    for s in segments
-        print(io, "\n  ")
-        showcompact(io, s)
     end
 end

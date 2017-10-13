@@ -224,3 +224,23 @@ of the symbol.
 @derefmethod isglobal(sym::SymbolRef)
 @derefmethod islocal(sym::SymbolRef)
 @derefmethod isweak(sym::SymbolRef)
+
+
+
+## Printing
+function show(io::IO, sym::Union{SymtabEntry{H},SymbolRef{H}}) where {H <: ObjectHandle}
+    print(io, "$(format_string(H)) Symbol")
+
+    if !get(io, :compact, false)
+        println(io)
+        println(io, "       Name: $(symbol_name(sym))")
+        println(io, "      Value: $(symbol_value(sym))")
+        println(io, "    Defined: $(isundef(sym) ? "No" : "Yes")")
+        println(io, "     Strong: $(isweak(sym) ? "No" : "Yes")")
+        print(io,   "   Locality: $(isglobal(sym) ? "Global" : "Local")")
+    else
+        print(io, " \"$(symbol_name(sym))\"")
+    end
+end
+
+show(io::IO, syms::Symbols{H}) where {H <: ObjectHandle} = show_collection(io, syms, H)

@@ -23,7 +23,7 @@ given below, with methods that subclasses must implement marked in emphasis:
   - *DynamicLinks()*
 
 ### Iteration
-  - getindex()
+  - *getindex()*
   - *endof()*
   - length()
   - start()
@@ -43,6 +43,7 @@ done(dls::DynamicLinks, idx) = idx > length(dls)
 next(dls::DynamicLinks, idx) = (dls[idx], idx+1)
 length(dls::DynamicLinks) = endof(dls)
 eltype(::Type{D}) where {D <: DynamicLinks} = DynamicLink
+@mustimplement getindex(dls::DynamicLinks, idx)
 
 """
     DynamicLink
@@ -82,7 +83,7 @@ marked in emphasis:
 ### RPath operations
   - *rpaths()*
   - canonical_rpaths()
-  - *find_library()*
+  - find_library()
 """
 abstract type RPath{H <: ObjectHandle} end
 
@@ -106,6 +107,15 @@ Return the handle that this `RPath` object refers to.
 Return the list of paths that will be searched for shared libraries.
 """
 @mustimplement rpaths(rpath::RPath)
+
+endof(rpath::RPath) = endof(rpaths(rpath))
+start(rpath::RPath) = 1
+done(rpath::RPath, idx) = idx > length(rpath)
+next(rpath::RPath, idx) = (rpath[idx], idx+1)
+length(rpath::RPath) = endof(rpath)
+eltype(::Type{D}) where {D <: RPath} = String
+getindex(rpath::RPath, idx) = rpaths(rpath)[idx]
+
 
 """
     canonical_rpaths(rpath::RPath)
@@ -145,3 +155,19 @@ function find_library(rpath::RPath, soname::String)
     end
     return soname
 end
+
+
+### Printing
+function show(io::IO, dl::DynamicLink{H}) where {H <: ObjectHandle}
+    print(io, "$(format_string(H)) DynamicLink \"$(path(dl))\"")
+end
+
+show(io::IO, dls::DynamicLinks{H}) where {H <: ObjectHandle} = show_collection(io, dls, H)
+show(io::IO, rp::RPath{H}) where {H <: ObjectHandle} = show_collection(io, rp, H)
+
+# function show(io::IO, rpath::RPath{H}) where {H <: ObjectHandle}
+#     print(io, "$(format_string(H)) RPaths")
+#     for path in rpaths(rpath)
+#         print(io, "\n  $(path)")
+#     end
+# end

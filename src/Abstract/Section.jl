@@ -2,7 +2,7 @@
 export Sections,
        getindex, endof, length, start, next, done, eltype,
        find, findfirst,
-       handle, header
+       handle, header, format_string
 
 # Export Section API
 export Section,
@@ -118,7 +118,6 @@ Return the `ObjectHandle` that this `Sections` object belongs to
 @mustimplement handle(sections::Sections)
 
 
-
 """
     Section
 
@@ -151,25 +150,10 @@ subclasses must implement marked in emphasis:
 """
 abstract type Section{H<:ObjectHandle} end
 
-deref(section::Section) = section
+# read() is how we construct a `Section`
 @mustimplement read(oh::ObjectHandle, ::Type{Section})
 
-# """
-#     position(section::Section)
-
-# Return the position of a Section within a file
-# """
-# position(section::Section) = position(handle(x)) - section_offset(x)
-
-
-# """
-#     seek(oh::ObjectHandle, section::Section)
-
-# Seek the given `ObjectHandle` to the beginning of `section`
-# """
-# function seek(oh::H, section::Section{T}) where {H <: ObjectHandle, T <: H}
-#     return seek(oh, section_offset(section))
-# end
+deref(section::Section) = section
 
 """
     contents(oh::ObjectHandle, section::Section)
@@ -346,3 +330,22 @@ function eof(section::SectionRef)
     section_end = section_offset(section) + section_size(section)
     return position(handle(section)) >= section_end
 end
+
+
+
+# Common Printing
+function show(io::IO, s::Union{Section{H},SectionRef{H}}) where {H <: ObjectHandle}
+    print(io, "$(format_string(H)) Section")
+
+    if !get(io, :compact, false)
+        println(io)
+        println(io, "       Name: $(section_name(s))")
+        println(io, "       Size: 0x$(hex(section_size(s)))")
+        println(io, "     Offset: 0x$(hex(section_offset(s)))")
+        print(io,   "    Address: 0x$(hex(section_address(s)))")
+    else
+        print(io, " \"$(section_name(s))\"")
+    end
+end
+
+show(io::IO, sects::Sections{H}) where {H <: ObjectHandle} = show_collection(io, sects, H)

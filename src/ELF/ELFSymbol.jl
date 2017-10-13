@@ -176,29 +176,3 @@ function symbol_value(sym::ELFSymbolRef)
     # Return our ill-gotten goods
     return value
 end
-
-
-# Symbol printing stuff
-function show(io::IO, sym::Union{ELFSymtabEntry,ELFSymbolRef})
-    is64bit = isa(deref(sym), ELFSymtabEntry64)
-    print(io, "ELFSymbol", is64bit ? " (64 bit)": "")
-
-    if !get(io, :compact, false)
-        println(io)
-        println(io, "       Name: $(symbol_name(sym))")
-        println(io, "      Value: $(symbol_value(sym))")
-        println(io, "    Defined: $(isundef(sym) ? "No" : "Yes")")
-        println(io, "     Strong: $(isweak(sym) ? "No" : "Yes")")
-        print(io,   "   Locality: $(isglobal(sym) ? "Global" : "Local")")
-    else
-        print(io, " \"$(symbol_name(sym))\"")
-    end
-end
-
-function show(io::IO, syms::ELFSymbols)
-    print(io, "ELF Symbol Table")
-    for s in syms
-        print(io, "\n  ")
-        showcompact(io, s)
-    end
-end

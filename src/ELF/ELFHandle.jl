@@ -77,6 +77,7 @@ isexecutable(oh::ELFHandle) = header(oh).e_type == ET_EXEC
 islibrary(oh::ELFHandle) = header(oh).e_type == ET_DYN
 mangle_section_name(oh::ELFHandle, name::AbstractString) = string(".", name)
 mangle_symbol_name(oh::ELFHandle, name::AbstractString) = name
+format_string(::Type{H}) where {H <: ELFHandle} = "ELF"
 
 # Section information
 section_header_offset(oh::ELFHandle) = header(oh).e_shoff
@@ -144,6 +145,3 @@ end
 
 ## Misc. operations
 path(oh::ELFHandle) = oh.path
-function show(io::IO, oh::ELFHandle)
-    print(io, "ELF Handle ($(is64bit(oh) ? "64" : "32")-bit)")
-end

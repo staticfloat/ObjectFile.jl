@@ -60,18 +60,6 @@ end
 
 
 # Printing
-function show(io::IO, dl::MachODynamicLink)
-    print(io, "MachO DynamicLink \"$(path(dl))\"")
-end
-
-function show(io::IO, dls::MachODynamicLinks)
-    print(io, "MachO Dynamic Links")
-    for dl in dls
-        print(io, "\n  ")
-        showcompact(io, dl)
-    end
-end
-
 function show(io::IO, rpath::MachORPath)
     print(io, "MachO RPaths")
     for path in rpaths(rpath)

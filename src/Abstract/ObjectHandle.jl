@@ -4,7 +4,7 @@ export ObjectHandle,
        seek, seekstart, skip, start, iostream, position, read, readuntil, eof,
        unpack,
        endianness, is64bit, isrelocatable, isexecutable, islibrary, 
-       mangle_section_name, mangle_symbol_name, handle, header,
+       mangle_section_name, mangle_symbol_name, handle, header, format_string,
        section_header_offset, section_header_size, section_header_type,
        segment_header_offset, segment_header_size, segment_header_type,
        symtab_entry_offset, symtab_entry_size, symtab_entry_type,
@@ -54,6 +54,7 @@ where `oh <: COFFHandle`).
   - *mangle_symbol_name()*
   - handle()
   - *header()*
+  - *format_string()*
 
 ### Section properties
   - *section_header_offset()*
@@ -72,6 +73,7 @@ where `oh <: COFFHandle`).
 
 ### Misc
   - *path()*
+  - show()
   - find_library()
   - find_libraries()
 """
@@ -241,6 +243,15 @@ particular object file format.
 @mustimplement header(oh::ObjectHandle)
 
 """
+    format_string(::Type{H}) where {H <: ObjectHandle}
+
+Return the string name of the given `ObjectHandle`, examples are "ELF",
+"MachO", "COFF", etc...
+"""
+@mustimplement format_string(oh::Type)
+format_string(::H) where {H <: ObjectHandle} = format_string(H)
+
+"""
     section_header_offset(oh::ObjectHandle)
 
 Given an `ObjectHandle`, return the offset (in bytes) at which the sections
@@ -345,6 +356,10 @@ function path(io::IO)
         return abspath(io.name[7:end-1])
     end
     return ""
+end
+
+function show(io::IO, oh::H) where {H <: ObjectHandle}
+    print(io, "$(format_string(H)) Handle ($(is64bit(oh) ? "64" : "32")-bit)")
 end
 
 """

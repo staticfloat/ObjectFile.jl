@@ -43,9 +43,9 @@ isexecutable(oh::MachOHandle) = header(oh).filetype == MH_EXECUTE
 islibrary(oh::MachOHandle) = header(oh).filetype == MH_DYLIB
 mangle_section_names(oh::MachOHandle, name) = string("__", name)
 mangle_symbol_name(oh::MachOHandle, name::AbstractString) = string("_", name)
+format_string(::Type{H}) where {H <: MachOHandle} = "MachO"
 
 # Section information
-# section_header_offset(oh::MachOHandle) = header(oh).e_shoff
 section_header_size(oh::MachOHandle) = sizeof(section_header_type(oh))
 function section_header_type(oh::H) where {H <: MachOHandle}
     if is64bit(oh)
@@ -57,6 +57,3 @@ end
 
 # Misc. stuff
 path(oh::MachOHandle) = oh.path
-function show(io::IO, oh::MachOHandle)
-    print(io, "MachO Handle ($(is64bit(oh) ? "64" : "32")-bit)")
-end

@@ -116,27 +116,3 @@ end
 Section(rpath::ELFRPath) = rpath.section_ref
 handle(rpath::ELFRPath) = handle(Section(rpath))
 rpaths(rpath::ELFRPath) = rpath.rpath
-
-
-
-
-
-# Printing
-function show(io::IO, dl::ELFDynamicLink)
-    print(io, "ELF DynamicLink \"$(path(dl))\"")
-end
-
-function show(io::IO, dls::ELFDynamicLinks)
-    print(io, "ELF Dynamic Links")
-    for dl in dls
-        print(io, "\n  ")
-        showcompact(io, dl)
-    end
-end
-
-function show(io::IO, rpath::ELFRPath)
-    print(io, "ELF RPaths")
-    for path in rpaths(rpath)
-        print(io, "\n  $(path)")
-    end
-end

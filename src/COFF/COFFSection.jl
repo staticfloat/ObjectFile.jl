@@ -66,4 +66,12 @@ deref(s::COFFSectionRef) = s.section
 sections(s::COFFSectionRef) = s.sections
 handle(s::COFFSectionRef) = handle(sections(s))
 section_number(s::COFFSectionRef) = s.idx
-section_name(s::COFFSectionRef) = fixed_string_lookup(handle(s), deref(s).Name)
+function section_name(s::COFFSectionRef)
+    name = unsafe_string(deref(s).Name)
+    if !isempty(name) && name[1] == '/'
+        # Wow, COFF files are weird.
+        strtab = StrTab(handle(s))
+        return strtab_lookup(strtab, parse(Int, name[2:end]))
+    end
+    return name
+end

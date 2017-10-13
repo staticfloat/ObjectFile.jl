@@ -14,7 +14,8 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
         "win" => COFFHandle,
     )
 
-    H = types[dir_path[1:end-2]]
+    platform = dir_path[1:end-2]
+    H = types[platform]
     bits = dir_path[end-1:end]
 
     @testset "$(dir_path)" begin
@@ -56,11 +57,11 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
         # not defined in `fooifier`.  Also ensure that `_main` is defined in
         # `fooifier` and is not present in `libfoo`.
         @testset "Symbols" begin
-            syms_exe = Symbols(oh_exe)
-            syms_lib = Symbols(oh_lib)
+            syms_exe = collect(Symbols(oh_exe))
+            syms_lib = collect(Symbols(oh_lib))
 
-            syms_names_exe = symbol_name.(collect(syms_exe))
-            syms_names_lib = symbol_name.(collect(syms_lib))
+            syms_names_exe = symbol_name.(syms_exe)
+            syms_names_lib = symbol_name.(syms_lib)
 
             # ELF stores the symbol name as "foo", MachO stores it as "_foo"
             foo_sym_name = mangle_symbol_name(oh_exe, "foo")
@@ -79,18 +80,64 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             @test main_idx_exe != 0
             @test foo_idx_lib != 0
 
-            # Global detection doesn't seem to be working on OSX...
-            @test isundef(syms_exe[foo_idx_exe])
+            # definedness doesn't seem to be for COFF files...
+            if !isa(oh_exe, COFFHandle)
+                @test isundef(syms_exe[foo_idx_exe])
+                @test !isundef(syms_exe[main_idx_exe])
+                @test !isundef(syms_lib[foo_idx_lib])
+            end
+            
             @test !islocal(syms_exe[foo_idx_exe])
-            #@test isglobal(syms_exe[foo_idx_exe])
-
-            @test !isundef(syms_exe[main_idx_exe])
             @test !islocal(syms_exe[main_idx_exe])
-            #@test isglobal(syms_exe[main_idx_exe])
-
-            @test !isundef(syms_lib[foo_idx_lib])
             @test !islocal(syms_lib[foo_idx_lib])
-            #@test isglobal(syms_lib[foo_idx_lib])
+
+            # Global detection doesn't seem to be working on OSX...
+            if !isa(oh_exe, MachOHandle)
+                @test isglobal(syms_exe[foo_idx_exe])
+                @test isglobal(syms_exe[main_idx_exe])
+                @test isglobal(syms_lib[foo_idx_lib])
+            end
+        end
+
+        @testset "Printing" begin
+            # Print out to an IOContext that will limit long lists
+            io = IOContext(STDOUT, :limit => true)
+
+            # Helper that shows the type, then the value:
+            function tshow(x)
+                type_name = typeof(x).name.name
+                info(io, "Showing $(type_name)")
+                show(io, x)
+                print(io, "\n")
+            end
+
+            # Show printing of a Handle
+            tshow(oh_lib)
+
+            # Test showing of Sections
+            sects = Sections(oh_exe)
+            tshow(sects)
+            tshow(sects[1])
+
+            # Test showing of Segments on non-COFF 
+            if !isa(oh_exe, COFFHandle)
+                segs = Segments(oh_lib)
+                tshow(segs)
+                tshow(segs[1])
+            end
+
+            # Test showing of Symbols
+            syms = Symbols(oh_exe)
+            tshow(syms)
+            tshow(syms[1])
+
+            # Test showing of RPath and DynamicLinks
+            rpath = RPath(oh_exe)
+            tshow(rpath)
+            
+            dls = DynamicLinks(oh_exe)
+            tshow(dls)
+            tshow(dls[1])
         end
     end
 end
@@ -102,6 +149,6 @@ test_libfoo_and_fooifier("./linux64/fooifier", "./linux64/libfoo.so")
 # Run MachO tests
 test_libfoo_and_fooifier("./mac64/fooifier", "./mac64/libfoo.dylib")
 
-# Run COFF tests (Commented out until we get these working)
-#test_libfoo_and_fooifier("./win32/fooifier.exe", "./win32/libfoo.dll")
-#test_libfoo_and_fooifier("./win64/fooifier.exe", "./win64/libfoo.dll")
+# Run COFF tests
+test_libfoo_and_fooifier("./win32/fooifier.exe", "./win32/libfoo.dll")
+test_libfoo_and_fooifier("./win64/fooifier.exe", "./win64/libfoo.dll")

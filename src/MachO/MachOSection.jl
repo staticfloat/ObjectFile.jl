@@ -118,26 +118,3 @@ function SectionRef(sections::MachOSections, s::MachOSection, idx)
     return MachOSectionRef(sections, s, UInt32(idx))
 end
 @derefmethod is64bit(s::MachOSectionRef)
-
-# Printing
-function show(io::IO, section::Union{MachOSection,MachOSectionRef})
-    print(io, "MachO Section", is64bit(section) ? " (64 bit)": "")
-
-    if !get(io, :compact, false)
-        println(io)
-        println(io, "       Name: $(section_name(section))")
-        println(io, "       Size: 0x$(hex(section_size(section)))")
-        println(io, "     Offset: 0x$(hex(section_offset(section)))")
-        print(io,   "    Address: 0x$(hex(section_address(section)))")
-    else
-        print(io, " \"$(section_name(section))\"")
-    end
-end
-
-function show(io::IO, sects::MachOSections)
-    print(io, "MachO Sections")
-    for sect in sects
-        print(io, "\n  ")
-        showcompact(io, sect)
-    end
-end

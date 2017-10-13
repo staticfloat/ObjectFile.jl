@@ -183,7 +183,7 @@ find(lcs::MachOLoadCmds, lc_type::T) where {T <: Type} = find(lcs, [lc_type])
 
 
 function load_cmd_type(header::MachOLoadCmdHeader{H}) where {H <: MachOHandle}
-    const type_mapping = Dict(
+    type_mapping = Dict(
         LC_SEGMENT => MachOSegment32Cmd{H},
         LC_SEGMENT_64 => MachOSegment64Cmd{H},
         LC_LOAD_DYLIB => MachOLoadDylibCmd{H},
@@ -231,7 +231,7 @@ and ending no more than `max_size` bytes ahead, read it in and return it as a
 Julia-native `String`.  If the given offset is bad in some way (it is negative,
 or begins beyond the end of `max_size`) an error string is returned.
 """
-function unpack_lcstr{H<:ObjectHandle}(oh::H, offset, max_size)
+function unpack_lcstr(oh::H, offset, max_size) where {H <: MachOHandle}
     # Perform sanity checking on offset; if it is too small or too large,
     # don't try to read the lc_str, just assign it "<lc_str offset corrupt>"
     if offset >= 0 && offset < max_size

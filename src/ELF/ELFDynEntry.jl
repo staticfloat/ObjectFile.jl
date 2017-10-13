@@ -44,7 +44,7 @@ Return `true` if the given `ELFDynEntry` represents an offset within the
 dynamic string table, and therefore can be used in a `strtab_lookup()`
 """
 function dyn_entry_is_string(d::ELFDynEntry)
-    const string_types = [
+    string_types = [
         DT_NEEDED,
         DT_SONAME,
         DT_RPATH,

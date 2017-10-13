@@ -39,7 +39,7 @@ print(io::IO, x::fixed_string) = print(io, unsafe_string(x))
 isempty(x::fixed_string) = (x.data & 0xff) == 0
 function length(x::fixed_string{T}) where {T <: Integer}
     for idx in 0:(sizeof(T)-1)
-        if (x.data & (0xff << idx*8)) == 0
+        if (x.data & (0xff << (idx*8))) == 0
             return idx
         end
     end

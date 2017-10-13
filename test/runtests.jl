@@ -8,7 +8,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     
     # Tease out some information from the containing folder name
     dir_path = basename(dirname(libfoo_path))
-    const types = Dict(
+    types = Dict(
         "linux" => ELFHandle,
         "mac" => MachOHandle,
         "win" => COFFHandle,

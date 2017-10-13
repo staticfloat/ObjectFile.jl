@@ -29,8 +29,8 @@ end
 ## Define creation methods
 function readmeta(io::IO, ::Type{H}) where {H <: COFFHandle}
     # This is the magic that we know we must find
-    const PE_magic = UInt8['P','E','\0','\0']
-    const MZ_magic = UInt8['M','Z']
+    PE_magic = UInt8['P','E','\0','\0']
+    MZ_magic = UInt8['M','Z']
 
     # Save the starting position of `io`
     start = position(io)

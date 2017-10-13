@@ -32,7 +32,7 @@ end
 ## Define creation methods
 function readmeta(io::IO, ::Type{H}) where {H <: ELFHandle}
     # This is the magic that we know we must find
-    const elven_magic = UInt8['\177', 'E', 'L', 'F']
+    elven_magic = UInt8['\177', 'E', 'L', 'F']
 
     # Save the starting position of `io`
     start = position(io)

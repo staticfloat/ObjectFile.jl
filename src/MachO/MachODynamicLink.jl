@@ -55,14 +55,3 @@ handle(mrp::MachORPath) = mrp.handle
 function rpaths(mrp::MachORPath)
     return [rpath(c) for c in mrp.cmds]
 end
-
-
-
-
-# Printing
-function show(io::IO, rpath::MachORPath)
-    print(io, "MachO RPaths")
-    for path in rpaths(rpath)
-        print(io, "\n  $(path)")
-    end
-end

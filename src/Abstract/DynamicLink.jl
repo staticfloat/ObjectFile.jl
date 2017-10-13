@@ -164,10 +164,3 @@ end
 
 show(io::IO, dls::DynamicLinks{H}) where {H <: ObjectHandle} = show_collection(io, dls, H)
 show(io::IO, rp::RPath{H}) where {H <: ObjectHandle} = show_collection(io, rp, H)
-
-# function show(io::IO, rpath::RPath{H}) where {H <: ObjectHandle}
-#     print(io, "$(format_string(H)) RPaths")
-#     for path in rpaths(rpath)
-#         print(io, "\n  $(path)")
-#     end
-# end

@@ -98,11 +98,3 @@ function show(io::IO, seg::Union{MachOSegment,MachOSegmentRef})
         print(io, " $(segment_name(seg))")
     end
 end
-
-function show(io::IO, segs::MachOSegments)
-    print(io, "MachO Segments")
-    for seg in segs
-        print(io, "\n  ")
-        showcompact(io, seg)
-    end
-end

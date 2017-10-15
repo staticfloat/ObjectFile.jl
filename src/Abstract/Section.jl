@@ -74,7 +74,7 @@ end
 
 Return a list of sections that match the given `name`.
 """
-function find(sections::Sections, name::String)
+function find(sections::Sections, name::AbstractString)
     return find(sections, [name])
 end
 
@@ -83,7 +83,7 @@ end
 
 Return a list of sections that match one of the given `names`.
 """
-function find(sections::Sections, names::Vector{String})
+function find(sections::Sections, names::Vector{S}) where {S <: AbstractString}
     return [s for s in sections if section_name(s) in names]
 end
 
@@ -92,7 +92,7 @@ end
 
 Return the first section that matches the given `name`.
 """
-function findfirst(sections::Sections, name::String)
+function findfirst(sections::Sections, name::AbstractString)
     return findfirst(sections, [name])
 end
 

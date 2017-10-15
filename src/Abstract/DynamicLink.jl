@@ -146,7 +146,7 @@ default library search paths.  This method takes the given `soname` and joins
 it to the end of every path within the given `RPath`, returning the resultant
 path if it exists, returning back the original `soname` if it doesn't.
 """
-function find_library(rpath::RPath, soname::String)
+function find_library(rpath::RPath, soname::AbstractString)
     for path in canonical_rpaths(rpath)
         libpath = joinpath(path, soname)
         if isfile(libpath)

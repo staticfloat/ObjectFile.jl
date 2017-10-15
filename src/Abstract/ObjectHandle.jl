@@ -368,7 +368,7 @@ Return the absolute path to the given `soname`, using the linker search path
 that the given `ObjectHandle` would use at runtime.  See the documentation for
 `find_library(::RPath, ::String)` for more details.
 """
-function find_library(oh::ObjectHandle, soname::String)
+function find_library(oh::ObjectHandle, soname::AbstractString)
     return find_library(RPath(oh), soname)
 end
 

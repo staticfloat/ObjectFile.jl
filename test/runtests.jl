@@ -38,6 +38,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             # Ensure these are the kinds of files we thought they were
             @test isexecutable(oh_exe)
             @test islibrary(oh_lib)
+            @test isdynamic(oh_exe) && isdynamic(oh_lib)
         end
 
         

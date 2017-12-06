@@ -72,6 +72,7 @@ is64bit(oh::ELFHandle) = elf_internal_is64bit(oh.ei)
 isrelocatable(oh::ELFHandle) = header(oh).e_type == ET_REL
 isexecutable(oh::ELFHandle) = header(oh).e_type == ET_EXEC
 islibrary(oh::ELFHandle) = header(oh).e_type == ET_DYN
+isdynamic(oh::ELFHandle) = !isempty(find(Sections(oh), ".dynamic"))
 mangle_section_name(oh::ELFHandle, name::AbstractString) = string(".", name)
 mangle_symbol_name(oh::ELFHandle, name::AbstractString) = name
 format_string(::Type{H}) where {H <: ELFHandle} = "ELF"

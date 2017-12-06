@@ -2,7 +2,7 @@
 export ObjectHandle,
        readmeta,
        seek, seekstart, skip, start, iostream, position, read, readuntil, eof,
-       endianness, is64bit, isrelocatable, isexecutable, islibrary, 
+       endianness, is64bit, isrelocatable, isexecutable, islibrary, isdynamic,
        mangle_section_name, mangle_symbol_name, handle, header, format_string,
        section_header_offset, section_header_size, section_header_type,
        segment_header_offset, segment_header_size, segment_header_type,
@@ -49,6 +49,7 @@ where `oh <: COFFHandle`).
   - *isrelocatable()*
   - *isexecutable()*
   - *islibrary()*
+  - *isdynamic()*
   - *mangle_section_name()*
   - *mangle_symbol_name()*
   - handle()
@@ -213,6 +214,13 @@ Returns `true` if the given `ObjectHandle` represents an executable object
 Returns `true` if the given `ObjectHandle` represents a shared library
 """
 @mustimplement islibrary(oh::ObjectHandle)
+
+"""
+    isdynamic(oh::ObjectHandle)
+
+Returns `true` if the given `ObjectHandle` makes use of dynamic linking.
+"""
+@mustimplement isdynamic(oh::ObjectHandle)
 
 """
     mangle_section_name(oh::ObjectHandle, name::AbstractString)

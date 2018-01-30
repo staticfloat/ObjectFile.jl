@@ -5,7 +5,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     # Actually read it in
     oh_exe = readmeta(fooifier_path)
     oh_lib = readmeta(libfoo_path)
-    
+
     # Tease out some information from the containing folder name
     dir_path = basename(dirname(libfoo_path))
     types = Dict(
@@ -41,7 +41,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             @test isdynamic(oh_exe) && isdynamic(oh_lib)
         end
 
-        
+
         @testset "Dynamic Linking" begin
             # Ensure that `dir_path` is one of the RPath entries
             rpath = RPath(oh_exe)
@@ -138,12 +138,24 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             # Test showing of RPath and DynamicLinks
             rpath = RPath(oh_exe)
             tshow(rpath)
-            
+
             dls = DynamicLinks(oh_exe)
             tshow(dls)
             tshow(dls[1])
         end
     end
+end
+
+function test_fat_libfoo(file)
+    oh = readmeta(file)
+    @test isa(oh, FatMachOHandle)
+    local (ntotal, n64) = (0, 0)
+    for coh in oh
+        ntotal += 1
+        n64 += is64bit(coh)
+    end
+    @test ntotal == 2
+    @test n64 == 1
 end
 
 # Run ELF tests
@@ -152,6 +164,7 @@ test_libfoo_and_fooifier("./linux64/fooifier", "./linux64/libfoo.so")
 
 # Run MachO tests
 test_libfoo_and_fooifier("./mac64/fooifier", "./mac64/libfoo.dylib")
+test_fat_libfoo("./mac64/libfoo_fat.dylib")
 
 # Run COFF tests
 test_libfoo_and_fooifier("./win32/fooifier.exe", "./win32/libfoo.dll")

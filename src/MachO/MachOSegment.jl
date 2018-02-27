@@ -83,7 +83,7 @@ deref(seg::MachOSegmentRef) = seg.segment
 
 # Printing
 function show(io::IO, seg::Union{MachOSegment,MachOSegmentRef})
-    print(io, "MachO Segment", is64bit(seg) ? " (64 bit)": "")
+    print(io, "MachO Segment", is64bit(seg) ? " (64 bit)" : "")
 
     if !get(io, :compact, false)
         fsz = hex(segment_file_size(seg))

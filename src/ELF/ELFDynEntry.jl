@@ -87,7 +87,7 @@ strtab_lookup(d::ELFDynEntryRef) = strtab_lookup(StrTab(d), deref(d).d_val)
 
 
 function show(io::IO, d::DT) where {DT <: ELFDynEntry}
-    print(io, "ELFDynEntry", DT <: ELFDynEntry64 ? " (64 bit)": "")
+    print(io, "ELFDynEntry", DT <: ELFDynEntry64 ? " (64 bit)" : "")
     print(io, " $(dyn_entry_type_string(d))")
 end
 

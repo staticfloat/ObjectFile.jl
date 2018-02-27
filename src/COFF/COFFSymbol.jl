@@ -1,8 +1,5 @@
 export COFFSymbols, COFFSymtabEntry, COFFSymbolRef
 
-# We need to import stuff from Base in order to do our tricksy Symbols stuffage
-import Base: iteratorsize, SizeUnknown
-
 """
     COFFSymbols
 

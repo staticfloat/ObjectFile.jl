@@ -105,7 +105,7 @@ const ObjTypes = Type[]
 Read an Object File out from an `IOStream`.  This is the first method you
 should call in order to manipulate object files.
 """
-function readmeta{T<:ObjectHandle}(io::IO, ::Type{T})
+function readmeta(io::IO, ::Type{T}) where {T<:ObjectHandle}
     # Implementing packages such as MachO.jl must explicitly override this
     error("$T must implement readmeta")
 end
@@ -135,7 +135,7 @@ function readmeta(io::IO)
     Object file is not any of $(join(ObjTypes, ", "))!
     To force one object file format use readmeta(io, T).
     """)
-    error(replace(msg, "\n", " "))
+    error(replace(msg, "\n" => " "))
 end
 
 """

@@ -1,5 +1,5 @@
 using ObjectFile
-using Base.Test
+using Compat, Compat.Test
 
 function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     # Actually read it in
@@ -102,12 +102,12 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
 
         @testset "Printing" begin
             # Print out to an IOContext that will limit long lists
-            io = IOContext(STDOUT, :limit => true)
+            io = IOContext(stdout, :limit => true)
 
             # Helper that shows the type, then the value:
             function tshow(x)
                 type_name = typeof(x).name.name
-                info(io, "Showing $(type_name)")
+                Compat.@info(io, "Showing $(type_name)")
                 show(io, x)
                 print(io, "\n")
             end

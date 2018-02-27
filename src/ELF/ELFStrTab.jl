@@ -19,7 +19,7 @@ struct ELFStrTab{H <: ELFHandle} <: StrTab{H}
             Loading Section $(section_idx) as a StrTab, despite it having section
             type $(section_type_string(section)), not SHT_STRTAB.
             """)
-            warn(replace(msg, "\n", " "), key=(handle(section), section_idx))
+            warn(replace(msg, "\n" => " "), key=(handle(section), section_idx))
         end
         
         return new(section)

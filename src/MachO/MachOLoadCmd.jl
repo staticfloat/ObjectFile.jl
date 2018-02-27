@@ -1,6 +1,5 @@
 # Export Mach-O specific stuff that is useful
 export MachOLoadCmd, MachOLoadCmdHeader, MachOLoadCmds, MachOLoadCmdRef
-export Segments
 
 
 """

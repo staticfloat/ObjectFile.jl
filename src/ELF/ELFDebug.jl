@@ -66,18 +66,18 @@ end
 struct dl_phdr_info
     dlpi_addr::UInt64
     dlpi_name::Ptr{UInt8}
-    dlpi_phdr::Ptr{Void}
+    dlpi_phdr::Ptr{Cvoid}
     dlpi_phnum::UInt16
 end
 
-function callback(info::Ptr{dl_phdr_info},size::Csize_t, data::Ptr{Void})
+function callback(info::Ptr{dl_phdr_info},size::Csize_t, data::Ptr{Cvoid})
     push!(unsafe_pointer_to_objref(data),unsafe_load(info))
     convert(Cint,0)
 end
 
 function loaded_libraries()
     x = Array(dl_phdr_info,0)
-    ccall(:dl_iterate_phdr, Cint, (Ptr{Void}, Any), cfunction(callback, Cint, (Ptr{dl_phdr_info},Csize_t,Ptr{Void})), x)
+    ccall(:dl_iterate_phdr, Cint, (Ptr{Cvoid}, Any), cfunction(callback, Cint, (Ptr{dl_phdr_info},Csize_t,Ptr{Cvoid})), x)
     x
 end
 

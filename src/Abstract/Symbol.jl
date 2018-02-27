@@ -177,7 +177,6 @@ passthroughs to the underlying `SymtabEntry` API calls for ease of use.
   - symbol_value()
   - isundef()
 """
-
 abstract type SymbolRef{H<:ObjectHandle} end
 
 """

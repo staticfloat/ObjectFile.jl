@@ -21,8 +21,8 @@ Convert a `fixed_string` object to a native-Julia `String`
 """
 function unsafe_string(x::fixed_string{T}) where {T <: Integer}
     data_array = reinterpret(UInt8, [x.data])
-    zero_idx = findfirst(data_array, 0)
-    if zero_idx == 0
+    zero_idx = findfirst(equalto(0x00), data_array)
+    if zero_idx === nothing
         zero_idx = sizeof(T) + 1
     end
 

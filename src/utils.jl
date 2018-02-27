@@ -99,7 +99,7 @@ macro constants(array, stripprefix, expr)
 
         # Strip out the prefix so our names are more interesting
         name = string(eq.args[1])
-        name = replace(name, stripprefix, "", 1)
+        name = replace(name, stripprefix => "", count=1)
 
         # Define the value, then slip its stripped prefix name into the name
         # lookup array right afterwards.
@@ -134,7 +134,7 @@ function read_struct(oh, type_func, size_func, name)
         Reported $(name) size ($(max_size) is smaller
         than calculated $(name) size ($(calc_size))
         """)
-        error(replace(msg, "\n", " "))
+        error(replace(msg, "\n" => " "))
     end
 
     # If it's less than or equal to, read it in, then skip past extra data we

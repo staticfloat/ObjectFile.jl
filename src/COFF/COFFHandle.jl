@@ -52,7 +52,7 @@ function readmeta(io::IO, ::Type{H}) where {H <: COFFHandle}
         Magic Number 0x$(join(hex.(magic),"")) does not match expected PE
         magic number 0x$(join("", hex.(PE_magic)))
         """
-        throw(MagicMismatch(replace(strip(msg), "\n", " ")))
+        throw(MagicMismatch(replace(strip(msg), "\n" => " ")))
     end
 
     # Read the PE header and place the header offset just past the PE_magic

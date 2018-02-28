@@ -107,7 +107,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             # Helper that shows the type, then the value:
             function tshow(x)
                 type_name = typeof(x).name.name
-                Compat.@info(io, "Showing $(type_name)")
+                println(io, "INFO: Showing $(type_name)")
                 show(io, x)
                 print(io, "\n")
             end

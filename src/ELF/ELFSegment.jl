@@ -1,4 +1,4 @@
-export Segments, ELFSegments, ELFSegment, ELFSegment32, ELFSegment64
+export ELFSegments, ELFSegment, ELFSegment32, ELFSegment64
 
 """
     ELFSegments

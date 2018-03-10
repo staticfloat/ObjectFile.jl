@@ -5,6 +5,7 @@ using StructIO
 # Bring in ObjectFile definitions
 using ObjectFile
 importall ObjectFile
+using Compat
 
 # Load in imported C #define constants
 include("constants.jl")

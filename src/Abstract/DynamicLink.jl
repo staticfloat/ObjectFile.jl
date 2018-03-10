@@ -34,7 +34,6 @@ given below, with methods that subclasses must implement marked in emphasis:
 ### Misc.
   - *handle()*
 """
-
 abstract type DynamicLinks{H <: ObjectHandle} end
 
 @mustimplement endof(dls::DynamicLinks)
@@ -130,9 +129,9 @@ function canonical_rpaths(rpath::RPath)
         # `@loader_path`.  Do the same for `@executable_path` even though
         # that's technically incorrect, because we don't have a good way to
         # track the web of dependencies right now.
-        paths[idx] = replace(paths[idx], "\$ORIGIN", origin)
-        paths[idx] = replace(paths[idx], "@loader_path", origin)
-        paths[idx] = replace(paths[idx], "@executable_path", origin)
+        paths[idx] = replace(paths[idx], "\$ORIGIN" => origin)
+        paths[idx] = replace(paths[idx], "@loader_path" => origin)
+        paths[idx] = replace(paths[idx], "@executable_path" => origin)
         paths[idx] = abspath(paths[idx])
     end
     return paths

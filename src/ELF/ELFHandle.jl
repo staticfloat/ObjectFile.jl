@@ -41,7 +41,7 @@ function readmeta(io::IO, ::Type{H}) where {H <: ELFHandle}
         Magic Number 0x$(join(hex.(magic),"")) does not match expected ELF
         magic number 0x$(join("", hex.(elven_magic)))
         """
-        throw(MagicMismatch(replace(strip(msg), "\n", " ")))
+        throw(MagicMismatch(replace(strip(msg), "\n" => " ")))
     end
 
     # Read the ELF Internal data, then skip its padding

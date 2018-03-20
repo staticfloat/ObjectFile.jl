@@ -391,13 +391,25 @@ function find_libraries(oh::ObjectHandle)
     rpath = RPath(oh)
     sonames = [path(dl) for dl in DynamicLinks(oh)]
 
-    # Remote '@rpath/' prefix if it exists
+    # Remove '@rpath/' prefix if it exists
     function strip_rpath(soname)
         if startswith(soname, "@rpath/")
             return soname[8:end]
         end
+       return soname
+    end
+
+    # Translate `@loader_path/` to the actual path of the binary
+    function strip_loader_path(soname)
+        if startswith(soname, "@loader_path/")
+            return joinpath(dirname(path(oh)), soname[14:end])
+        end
         return soname
     end
 
-    return Dict(s => find_library(oh, strip_rpath(s)) for s in sonames)
+    # Get rid of confusing loader tokens
+    sonames = strip_rpath.(sonames)
+    sonames = strip_loader_path.(sonames)
+
+    return Dict(s => find_library(oh, s) for s in sonames)
 end

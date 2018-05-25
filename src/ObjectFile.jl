@@ -27,6 +27,7 @@ function __init__()
 
     push!(ObjTypes, ELFHandle)
     push!(ObjTypes, MachOHandle)
+    push!(ObjTypes, FatMachOHandle)
     push!(ObjTypes, COFFHandle)
 end
 

@@ -138,17 +138,26 @@ function readmeta(io::IO)
     error(replace(msg, "\n" => " "))
 end
 
-"""
-    readmeta(path::AbstractStriong)
-
-Read an Object File out from a file `path`, guessing at the type of object
-within the stream by calling `readmeta(io, T)` for each `T` within `ObjTypes`,
-and returning the first that does not throw a `MagicMismatch`.
-"""
 function readmeta(file::AbstractString)
+    depwarn("`readmeta(file::AbstractString)` is deprecated, use the do-block variant instead.")
     return readmeta(open(file, "r"))
 end
 
+"""
+    readmeta(f::Function, file::AbstractString)
+
+Do-block variant of `readmeta()`.  Use via something like:
+
+    readmeta("libfoo.so") do f
+        ...
+    end
+"""
+function readmeta(f::Function, file::AbstractString)
+    io = open(file, "r")
+    ret = f(readmeta(io))
+    close(io)
+    return ret
+end
 
 
 ## IOStream-like operations

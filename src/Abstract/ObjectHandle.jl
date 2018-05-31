@@ -135,11 +135,11 @@ function readmeta(io::IO)
     Object file is not any of $(join(ObjTypes, ", "))!
     To force one object file format use readmeta(io, T).
     """)
-    error(replace(msg, "\n" => " "))
+    throw(MagicMismatch(replace(msg, "\n" => " ")))
 end
 
 function readmeta(file::AbstractString)
-    depwarn("`readmeta(file::AbstractString)` is deprecated, use the do-block variant instead.")
+    warn("`readmeta(file::AbstractString)` is deprecated, use the do-block variant instead.")
     return readmeta(open(file, "r"))
 end
 

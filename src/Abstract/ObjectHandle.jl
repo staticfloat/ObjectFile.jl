@@ -154,9 +154,11 @@ Do-block variant of `readmeta()`.  Use via something like:
 """
 function readmeta(f::Function, file::AbstractString)
     io = open(file, "r")
-    ret = f(readmeta(io))
-    close(io)
-    return ret
+    try
+        return f(readmeta(io))
+    finally
+        close(io)
+    end
 end
 
 

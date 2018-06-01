@@ -23,6 +23,11 @@ function readmeta(io::IO,::Type{MachOHandle})
     header_type = macho_header_type(magic)
     endianness = macho_endianness(magic)
 
+    # If it's fat, just throw MagicMismatch
+    if header_type <: MachOFatHeader
+        throw(MagicMismatch("FAT header"))
+    end
+
     # Unpack the header
     header = unpack(io, header_type, endianness)
     return MachOHandle(io, start, header, path(io))

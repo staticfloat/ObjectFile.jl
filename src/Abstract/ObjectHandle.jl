@@ -135,20 +135,31 @@ function readmeta(io::IO)
     Object file is not any of $(join(ObjTypes, ", "))!
     To force one object file format use readmeta(io, T).
     """)
-    error(replace(msg, "\n" => " "))
+    throw(MagicMismatch(replace(msg, "\n" => " ")))
 end
 
-"""
-    readmeta(path::AbstractStriong)
-
-Read an Object File out from a file `path`, guessing at the type of object
-within the stream by calling `readmeta(io, T)` for each `T` within `ObjTypes`,
-and returning the first that does not throw a `MagicMismatch`.
-"""
 function readmeta(file::AbstractString)
+    warn("`readmeta(file::AbstractString)` is deprecated, use the do-block variant instead.")
     return readmeta(open(file, "r"))
 end
 
+"""
+    readmeta(f::Function, file::AbstractString)
+
+Do-block variant of `readmeta()`.  Use via something like:
+
+    readmeta("libfoo.so") do f
+        ...
+    end
+"""
+function readmeta(f::Function, file::AbstractString)
+    io = open(file, "r")
+    try
+        return f(readmeta(io))
+    finally
+        close(io)
+    end
+end
 
 
 ## IOStream-like operations

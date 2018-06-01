@@ -3,8 +3,8 @@ using Compat, Compat.Test
 
 function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     # Actually read it in
-    oh_exe = readmeta(fooifier_path)
-    oh_lib = readmeta(libfoo_path)
+    oh_exe = readmeta(open(fooifier_path, "r"))
+    oh_lib = readmeta(open(libfoo_path, "r"))
     
     # Tease out some information from the containing folder name
     dir_path = basename(dirname(libfoo_path))
@@ -152,6 +152,12 @@ test_libfoo_and_fooifier("./linux64/fooifier", "./linux64/libfoo.so")
 
 # Run MachO tests
 test_libfoo_and_fooifier("./mac64/fooifier", "./mac64/libfoo.dylib")
+
+# Ensure that fat Mach-O files don't look like anything to us
+@testset "macfat" begin
+    @test_throws ObjectFile.MagicMismatch readmeta(open("./macfat/fooifier","r"))
+    @test_throws ObjectFile.MagicMismatch readmeta(open("./macfat/libfoo.dylib","r"))
+end
 
 # Run COFF tests
 test_libfoo_and_fooifier("./win32/fooifier.exe", "./win32/libfoo.dll")

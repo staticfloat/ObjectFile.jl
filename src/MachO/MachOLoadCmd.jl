@@ -121,7 +121,7 @@ function MachOLoadCmds(oh::H) where {H <: MachOHandle}
     # Begin by seeking to the header offset
     seek(oh, sizeof(header(oh)))
 
-    for idx in 1:(header(oh).ncmds - 1)
+    for idx in 1:header(oh).ncmds
         # Unpack each load command.  First, read in the header:
         cmd_header = unpack(oh, MachOLoadCmdHeader{H})
 

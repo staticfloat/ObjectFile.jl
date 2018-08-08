@@ -6,7 +6,7 @@ struct MachODynamicLinks{H <: MachOHandle, C <: MachOLoadCmdRef{H,MachOLoadDylib
 end
 
 function MachODynamicLinks(lcs::MachOLoadCmds)
-    ld_cmds = find(lcs, [MachOLoadDylibCmd])
+    ld_cmds = findall(lcs, [MachOLoadDylibCmd])
     return MachODynamicLinks(handle(lcs), ld_cmds)
 end
 MachODynamicLinks(oh::MachOHandle) = MachODynamicLinks(MachOLoadCmds(oh))
@@ -44,7 +44,7 @@ struct MachORPath{H <: MachOHandle} <: RPath{H}
 end
 
 function MachORPath(lcs::MachOLoadCmds)
-    cmds = find(lcs, [MachORPathCmd])
+    cmds = findall(lcs, [MachORPathCmd])
     return MachORPath(handle(lcs), cmds)
 end
 

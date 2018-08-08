@@ -12,7 +12,7 @@ struct MachOSegments{H <: MachOHandle, S <: MachOLoadCmdRef} <: Segments{H}
 end
 
 function Segments(lcs::MachOLoadCmds)
-    return MachOSegments(handle(lcs), find(lcs, [MachOSegmentCmd]))
+    return MachOSegments(handle(lcs), findall(lcs, [MachOSegmentCmd]))
 end
 function Segments(oh::MachOHandle)
     # Sub out to our MachOLoadCmds-based constructor

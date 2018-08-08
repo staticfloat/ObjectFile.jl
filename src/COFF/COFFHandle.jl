@@ -78,7 +78,7 @@ is64bit(oh::COFFHandle) = coff_header_is64bit(header(oh))
 isrelocatable(oh::COFFHandle) = isrelocatable(header(oh))
 isexecutable(oh::COFFHandle) = isexecutable(header(oh))
 islibrary(oh::COFFHandle) = islibrary(header(oh))
-isdynamic(oh::COFFHandle) = !isempty(find(Sections(oh), [".idata"]))
+isdynamic(oh::COFFHandle) = !isempty(findall(Sections(oh), [".idata"]))
 mangle_section_name(oh::COFFHandle, name::AbstractString) = string(".", name)
 function mangle_symbol_name(oh::COFFHandle, name::AbstractString)
     # sob

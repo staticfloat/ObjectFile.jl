@@ -42,7 +42,7 @@ end
 deref(x::RelocationRef) = x.reloc
 
 entrysize{T}(s::Relocations{T}) = sizeof(T)
-endof{T}(s::Relocations{T}) = div(s.sec.header.sh_size,entrysize(s))
+lastindex{T}(s::Relocations{T}) = div(s.sec.header.sh_size,entrysize(s))
 length(r::Relocations) = lastindex(r)
 function getindex{T}(s::Relocations{T},n)
     if n < 1 || n > length(s)

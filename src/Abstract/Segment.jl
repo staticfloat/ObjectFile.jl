@@ -8,7 +8,7 @@ export Segment, deref, segment_name, segment_offset, segment_file_size,
 export SegmentRef, segment_number
 
 # Import Base stuff for extension
-import Base: getindex, length, eltype, find, findfirst, iterate, lastindex
+import Base: getindex, length, eltype, findfirst, findall, iterate, lastindex
 
 """
     Segments
@@ -31,7 +31,7 @@ in emphasis:
   - eltype()
 
 ### Search
-  - find()
+  - findall()
   - findfirst()
 
 ### Misc.

@@ -154,16 +154,16 @@ end
 
 # Searching
 """
-    find(lcs::MachOLoadCmds, lc_types::Vector{Type})
+    findall(lcs::MachOLoadCmds, lc_types::Vector{Type})
 
 Given a list of `Type`s, filter out all load commands within `lcs` that are not
 of that type.  This method returns a `Vector` of `MachOLoadCmdRef` objects,
 containing only load commands that are of the requested types.  For example, to
 find all segments within a file:
 
-    find(MachOLoadCmds(oh), [MachOSegmentCmd])
+    findall(MachOLoadCmds(oh), [MachOSegmentCmd])
 """
-function find(lcs::MachOLoadCmds, lc_types::Vector{T}) where {T <: Type}
+function findall(lcs::MachOLoadCmds, lc_types::Vector{T}) where {T <: Type}
     indices = Integer[]
     for idx in 1:length(lcs.cmds)
         if any(typeof(lcs.cmds[idx]) <: lct for lct in lc_types)
@@ -174,7 +174,7 @@ function find(lcs::MachOLoadCmds, lc_types::Vector{T}) where {T <: Type}
     # Return a new MachOLoadCmds object, that has those headers defined within it
     return [lcs[idx] for idx in indices]
 end
-find(lcs::MachOLoadCmds, lc_type::T) where {T <: Type} = find(lcs, [lc_type])
+findall(lcs::MachOLoadCmds, lc_type::T) where {T <: Type} = findall(lcs, [lc_type])
 
 
 function load_cmd_type(header::MachOLoadCmdHeader{H}) where {H <: MachOHandle}

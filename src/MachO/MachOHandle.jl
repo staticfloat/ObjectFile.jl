@@ -45,7 +45,7 @@ is64bit(oh::MachOHandle) = macho_is64bit(header(oh).magic)
 isrelocatable(oh::MachOHandle) = header(oh).filetype == MH_OBJECT
 isexecutable(oh::MachOHandle) = header(oh).filetype == MH_EXECUTE
 islibrary(oh::MachOHandle) = header(oh).filetype == MH_DYLIB
-isdynamic(oh::MachOHandle) = !isempty(find(MachOLoadCmds(oh), [MachOLoadDylibCmd]))
+isdynamic(oh::MachOHandle) = !isempty(findall(MachOLoadCmds(oh), [MachOLoadDylibCmd]))
 mangle_section_names(oh::MachOHandle, name) = string("__", name)
 mangle_symbol_name(oh::MachOHandle, name::AbstractString) = string("_", name)
 format_string(::Type{H}) where {H <: MachOHandle} = "MachO"

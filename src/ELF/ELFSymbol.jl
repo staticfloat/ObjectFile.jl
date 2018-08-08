@@ -23,12 +23,12 @@ function Symbols(oh::H) where {H <: ELFHandle}
     sections = Sections(oh)
     # First, try to load `.symtab`.  If we can't load that guy, we'll fall back
     # to `.dynsym` which has less information, but is more likely to exist.
-    dyn_sections = find(sections, ".symtab")
+    dyn_sections = findall(sections, ".symtab")
     if !isempty(dyn_sections)
         return ELFSymbols(first(dyn_sections))
     end
     
-    dyn_sections = find(sections, ".dynsym")
+    dyn_sections = findall(sections, ".dynsym")
     if !isempty(dyn_sections)
         return ELFSymbols(first(dyn_sections))
     end

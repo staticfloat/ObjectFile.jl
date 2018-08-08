@@ -4,7 +4,7 @@
 
 # Export Symbols API
 export Symbols,
-       getindex, endof, length, iterate, lastindex, eltype,
+       getindex, length, iterate, lastindex, eltype,
        handle, header
        
 # Export SymtabEntry API

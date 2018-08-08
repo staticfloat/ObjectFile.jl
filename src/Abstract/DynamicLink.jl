@@ -1,6 +1,6 @@
 # Export DynamicLinks API
 export DynamicLinks,
-       getindex, endof, length, iterate, lastindex, eltype,
+       getindex, length, iterate, lastindex, eltype,
        handle, header
        
 # Export Dynamic Link API

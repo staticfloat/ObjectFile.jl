@@ -1,7 +1,7 @@
 # Export ObjectHandle API
 export ObjectHandle,
        readmeta,
-       seek, seekstart, skip, start, iostream, position, read, readuntil, eof,
+       seek, seekstart, skip, iostream, position, read, readuntil, eof,
        endianness, is64bit, isrelocatable, isexecutable, islibrary, isdynamic,
        mangle_section_name, mangle_symbol_name, handle, header, format_string,
        section_header_offset, section_header_size, section_header_type,
@@ -12,7 +12,7 @@ export ObjectHandle,
 export MagicMismatch
 
 # Import methods for extension
-import Base: seek, seekstart, skip, start, position, read, readuntil, eof,
+import Base: seek, seekstart, skip, position, read, readuntil, eof,
              getindex
 import StructIO: unpack
 

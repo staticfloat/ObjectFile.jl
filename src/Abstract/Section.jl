@@ -1,7 +1,7 @@
 # Export Sections API
 export Sections,
-       getindex, endof, length, lastindex, iterate, eltype,
-       find, findfirst,
+       getindex, length, lastindex, iterate, eltype,
+       findall, findfirst,
        handle, header, format_string
 
 # Export Section API
@@ -14,7 +14,7 @@ export SectionRef,
        read, seekstart, seek, eof, section_number
 
 # Import Base methods for extension
-import Base: read, seek, seekstart, eof, length, eltype, find,
+import Base: read, seek, seekstart, eof, length, eltype, findall,
              findfirst, iterate, lastindex
 
 """
@@ -38,7 +38,7 @@ in emphasis:
   - eltype()
 
 ### Search
-  - find()
+  - findall()
   - findfirst()
 
 ### Misc.
@@ -66,20 +66,20 @@ function getindex(sections::Sections, idx)
 end
 
 """
-    find(sections::Sections, name::String)
+    findall(sections::Sections, name::String)
 
 Return a list of sections that match the given `name`.
 """
-function find(sections::Sections, name::AbstractString)
-    return find(sections, [name])
+function findall(sections::Sections, name::AbstractString)
+    return findall(sections, [name])
 end
 
 """
-    find(sections::Sections, name::String)
+    findall(sections::Sections, name::String)
 
 Return a list of sections that match one of the given `names`.
 """
-function find(sections::Sections, names::Vector{S}) where {S <: AbstractString}
+function findall(sections::Sections, names::Vector{S}) where {S <: AbstractString}
     return [s for s in sections if section_name(s) in names]
 end
 
@@ -98,7 +98,7 @@ end
 Return the first section that matches on of the given `names`.
 """
 function findfirst(sections::Sections, names::Vector{String})
-    results = find(sections, names)
+    results = findall(sections, names)
     if isempty(results)
         error("Could not find any sections that match $(names)")
     end

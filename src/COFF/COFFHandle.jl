@@ -68,7 +68,7 @@ end
 
 
 ## IOStream-like operations:
-start(oh::COFFHandle) = oh.start
+startaddr(oh::COFFHandle) = oh.start
 iostream(oh::COFFHandle) = oh.io
 
 ## Format-specific properties:

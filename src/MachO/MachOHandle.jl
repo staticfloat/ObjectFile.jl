@@ -34,7 +34,7 @@ function readmeta(io::IO,::Type{MachOHandle})
 end
 
 ## IOStream-like operations:
-start(oh::MachOHandle) = oh.start
+startaddr(oh::MachOHandle) = oh.start
 iostream(oh::MachOHandle) = oh.io
 
 

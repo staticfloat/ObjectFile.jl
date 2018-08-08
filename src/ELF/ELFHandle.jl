@@ -61,7 +61,7 @@ end
 
 
 ## IOStream-like operations:
-start(oh::ELFHandle) = oh.start
+startaddr(oh::ELFHandle) = oh.start
 iostream(oh::ELFHandle) = oh.io
 
 

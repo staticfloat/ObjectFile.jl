@@ -35,7 +35,7 @@ where `oh <: COFFHandle`).
   - seek()
   - seekstart()
   - skip()
-  - start()
+  - startaddr()
   - iostream()
   - position()
   - read()
@@ -171,16 +171,16 @@ Returns the `IOStream` backing the `ObjectHandle`
 @mustimplement iostream(oh::ObjectHandle)
 
 """
-    start(oh::ObjectHandle)
+    startaddr(oh::ObjectHandle)
 
 Returns the offset within the underlying `IOStream` at which this
 `ObjectHandle` is located.
 """
-@mustimplement start(oh::ObjectHandle)
+@mustimplement startaddr(oh::ObjectHandle)
 
 unpack(oh::ObjectHandle, T) = unpack(iostream(oh), T, endianness(oh))
-position(oh::ObjectHandle) = position(iostream(oh)) - start(oh)
-seek(oh::ObjectHandle, pos::Integer) = seek(iostream(oh), start(oh) + pos)
+position(oh::ObjectHandle) = position(iostream(oh)) - startaddr(oh)
+seek(oh::ObjectHandle, pos::Integer) = seek(iostream(oh), startaddr(oh) + pos)
 seekstart(oh::ObjectHandle) = seek(oh, 0)
 
 # Generate a bunch of wrappers for ObjectHandles that just call iostream()

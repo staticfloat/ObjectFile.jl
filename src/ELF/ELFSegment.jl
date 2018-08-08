@@ -13,11 +13,9 @@ Segments(oh::ELFHandle) = ELFSegments(oh)
 handle(segs::ELFSegments) = segs.handle
 
 # Iteration
-start(segs::ELFSegments) = 1
-endof(segs::ELFSegments) = header(handle(segs)).e_phnum
-done(segs::ELFSegments, idx) = idx > length(segs)
-next(segs::ELFSegments, idx) = (segs[idx], idx+1)
-length(segs::ELFSegments) = endof(segs)
+iterate(segs::ELFSegments, idx=1) = idx > length(segs) ? nothing : (segs[idx], idx+1)
+lastindex(segs::ELFSegments) = header(handle(segs)).e_phnum
+length(segs::ELFSegments) = lastindex(segs)
 eltype(::Type{S}) where {S <: ELFSegments} = ELFSegmentRef
 
 function getindex(segs::ELFSegments{H}, idx) where {H <: ELFHandle}

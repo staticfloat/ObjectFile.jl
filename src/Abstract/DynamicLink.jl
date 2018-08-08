@@ -1,6 +1,6 @@
 # Export DynamicLinks API
 export DynamicLinks,
-       getindex, endof, length, start, next, done, eltype,
+       getindex, endof, length, iterate, lastindex, eltype,
        handle, header
        
 # Export Dynamic Link API
@@ -11,6 +11,8 @@ export DynamicLink,
 export RPath,
        handle, rpaths, canonical_rpaths, find_library
        
+# Import iteration protocol
+import Base: iterate, length, lastindex
 
 """
     DynamicLinks
@@ -24,11 +26,8 @@ given below, with methods that subclasses must implement marked in emphasis:
 
 ### Iteration
   - *getindex()*
-  - *endof()*
-  - length()
-  - start()
-  - next()
-  - done()
+  - *lastindex()*
+  - iterate()
   - eltype()
 
 ### Misc.
@@ -36,11 +35,9 @@ given below, with methods that subclasses must implement marked in emphasis:
 """
 abstract type DynamicLinks{H <: ObjectHandle} end
 
-@mustimplement endof(dls::DynamicLinks)
-start(dls::DynamicLinks) = 1
-done(dls::DynamicLinks, idx) = idx > length(dls)
-next(dls::DynamicLinks, idx) = (dls[idx], idx+1)
-length(dls::DynamicLinks) = endof(dls)
+@mustimplement lastindex(dls::DynamicLinks)
+iterate(dls::DynamicLinks, idx=1) = idx > length(dls) ? nothing : (dls[idx], idx+1)
+length(dls::DynamicLinks) = lastindex(dls)
 eltype(::Type{D}) where {D <: DynamicLinks} = DynamicLink
 @mustimplement getindex(dls::DynamicLinks, idx)
 
@@ -83,6 +80,8 @@ marked in emphasis:
   - *rpaths()*
   - canonical_rpaths()
   - find_library()
+  - lastindex()
+  - iterate()
 """
 abstract type RPath{H <: ObjectHandle} end
 
@@ -107,11 +106,9 @@ Return the list of paths that will be searched for shared libraries.
 """
 @mustimplement rpaths(rpath::RPath)
 
-endof(rpath::RPath) = lastindex(rpaths(rpath))
-start(rpath::RPath) = 1
-done(rpath::RPath, idx) = idx > length(rpath)
-next(rpath::RPath, idx) = (rpath[idx], idx+1)
-length(rpath::RPath) = endof(rpath)
+lastindex(rpath::RPath) = lastindex(rpaths(rpath))
+iterate(rpaht::RPath, idx=1) = idx > length(rpath) ? nothing : (rpath[idx], idx+1)
+length(rpath::RPath) = lastindex(rpath)
 eltype(::Type{D}) where {D <: RPath} = String
 getindex(rpath::RPath, idx) = rpaths(rpath)[idx]
 

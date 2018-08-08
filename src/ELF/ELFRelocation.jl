@@ -43,7 +43,7 @@ deref(x::RelocationRef) = x.reloc
 
 entrysize{T}(s::Relocations{T}) = sizeof(T)
 endof{T}(s::Relocations{T}) = div(s.sec.header.sh_size,entrysize(s))
-length(r::Relocations) = endof(r)
+length(r::Relocations) = lastindex(r)
 function getindex{T}(s::Relocations{T},n)
     if n < 1 || n > length(s)
         throw(BoundsError())
@@ -53,10 +53,7 @@ function getindex{T}(s::Relocations{T},n)
     RelocationRef{T}(s.sec.handle,unpack(s.sec.handle, T))
 end
 
-
-start(s::Relocations) = 1
-done(s::Relocations,n) = n > length(s)
-next(s::Relocations,n) = (x=s[n];(x,n+1))
+iterate(s::Relocations, idx=1) = idx > length(s) ? nothing : (s[idx], idx+1)
 
 # Utilities for extracting information from relocation entries
 r_sym(rel::Union{ELF32.Rel,ELF32.Rela}) = rel.r_info >> 8

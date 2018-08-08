@@ -54,7 +54,7 @@ handle(syms::COFFSymbols) = syms.handle
 #     next_idx = idx + deref(syms[idx]).NumberOfAuxSymbols + 1
 #     return (syms[idx], next_idx)
 # end
-endof(syms::COFFSymbols) = num_symbols(header(handle(syms)))
+lastindex(syms::COFFSymbols) = num_symbols(header(handle(syms)))
 
 # We override `iteratorsize` so that list comprehensions and collect() calls on
 # our Symbols don't have a bunch of #undef entries at the end of the array

@@ -12,7 +12,7 @@ Sections(oh::COFFHandle) = COFFSections(oh)
 
 # Implement Sections API
 handle(sections::COFFSections) = sections.handle
-endof(sections::COFFSections) = num_sections(header(handle(sections)))
+lastindex(sections::COFFSections) = num_sections(header(handle(sections)))
 
 
 """

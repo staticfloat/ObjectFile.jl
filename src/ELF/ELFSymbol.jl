@@ -44,7 +44,7 @@ Section(syms::ELFSymbols) = syms.section_ref
 handle(syms::ELFSymbols) = handle(Section(syms))
 symtab_entry_type(syms::ELFSymbols) = symtab_entry_type(handle(syms))
 
-function endof(syms::ELFSymbols{H}) where {H <: ELFHandle}
+function lastindex(syms::ELFSymbols{H}) where {H <: ELFHandle}
     sect_size = section_size(Section(syms))
     sym_size = sizeof(symtab_entry_type(syms))
     return div(sect_size, sym_size)

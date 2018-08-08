@@ -4,7 +4,7 @@
 
 # Export Symbols API
 export Symbols,
-       getindex, endof, length, start, next, done, eltype,
+       getindex, endof, length, iterate, lastindex, eltype,
        handle, header
        
 # Export SymtabEntry API
@@ -15,6 +15,8 @@ export SymtabEntry,
 export SymbolRef,
        symbol_number
 
+# Import iteration protocol
+import Base: length, iterate, lastindex
 
 """
     Symbols
@@ -31,11 +33,9 @@ in emphasis:
 
 ### Iteration
   - getindex()
-  - *endof()*
+  - *lastindex()*
   - length()
-  - start()
-  - next()
-  - done()
+  - iterate()
   - eltype()
 
 ### Misc.
@@ -44,11 +44,9 @@ in emphasis:
 abstract type Symbols{H<:ObjectHandle} end
 
 # Fairly simple iteration interface specification
-@mustimplement endof(syms::Symbols)
-start(syms::Symbols) = 1
-done(syms::Symbols, idx) = idx > length(syms)
-next(syms::Symbols, idx) = (syms[idx], idx+1)
-length(syms::Symbols) = endof(syms)
+@mustimplement lastindex(syms::Symbols)
+length(syms::Symbols) = lastindex(syms)
+iterate(syms::Symbols, idx=1) = idx > length(syms) ? nothing : (syms[idx], idx+1)
 eltype(::Type{S}) where {S <: Symbols} = SymbolRef
 
 function getindex(syms::Symbols{H}, idx) where {H <: ObjectHandle}

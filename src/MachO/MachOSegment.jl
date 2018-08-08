@@ -20,7 +20,7 @@ function Segments(oh::MachOHandle)
 end
 
 handle(segments::MachOSegments) = segments.handle
-endof(segments::MachOSegments) = lastindex(segments.segments)
+lastindex(segments::MachOSegments) = lastindex(segments.segments)
 function getindex(segs::MachOSegments{H}, idx) where {H <: MachOHandle}
     seg = MachOSegment(segs.segments[idx])
     return MachOSegmentRef(segs, seg, UInt32(idx))

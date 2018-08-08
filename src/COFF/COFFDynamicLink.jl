@@ -49,7 +49,7 @@ end
 DynamicLinks(oh::COFFHandle) = COFFDynamicLinks(oh)
 
 handle(dls::COFFDynamicLinks) = dls.handle
-endof(dls::COFFDynamicLinks) = lastindex(dls.links)
+lastindex(dls::COFFDynamicLinks) = lastindex(dls.links)
 getindex(dls::COFFDynamicLinks, idx) = getindex(dls.links, idx)
 
 

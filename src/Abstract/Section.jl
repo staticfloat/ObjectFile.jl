@@ -1,6 +1,6 @@
 # Export Sections API
 export Sections,
-       getindex, endof, length, start, next, done, eltype,
+       getindex, endof, length, lastindex, iterate, eltype,
        find, findfirst,
        handle, header, format_string
 
@@ -14,8 +14,8 @@ export SectionRef,
        read, seekstart, seek, eof, section_number
 
 # Import Base methods for extension
-import Base: read, seek, seekstart, eof, start, length, done, next, endof,
-             eltype, find, findfirst
+import Base: read, seek, seekstart, eof, length, eltype, find,
+             findfirst, iterate, lastindex
 
 """
     Sections
@@ -32,11 +32,9 @@ in emphasis:
 
 ### Iteration
   - getindex()
-  - *endof()*
+  - *lastindex()*
   - length()
-  - start()
-  - next()
-  - done()
+  - iterate()
   - eltype()
 
 ### Search
@@ -49,11 +47,9 @@ in emphasis:
 abstract type Sections{H<:ObjectHandle} end
 
 # Fairly simple iteration interface specification
-@mustimplement endof(sections::Sections)
-start(sections::Sections) = 1
-done(sections::Sections, idx) = idx > length(sections)
-next(sections::Sections, idx) = (sections[idx], idx+1)
-length(sections::Sections) = endof(sections)
+@mustimplement lastindex(sections::Sections)
+length(sections::Sections) = lastindex(sections)
+iterate(sections::Sections, idx=1) = idx > length(sections) ? nothing : (sections[idx], idx+1)
 eltype(::Type{S}) where {S <: Sections} = SectionRef
 
 function getindex(sections::Sections, idx)
@@ -227,7 +223,6 @@ underlying `Section` API calls for ease of use.
   - seekstart()
   - seek()
   - eof()
-
 
 ### Format-specific properties:
   - section_name()

@@ -17,7 +17,7 @@ Sections(oh::ELFHandle) = ELFSections(oh)
 
 # Implement Sections API
 handle(sections::ELFSections) = sections.handle
-endof(sections::ELFSections) = header(handle(sections)).e_shnum
+lastindex(sections::ELFSections) = header(handle(sections)).e_shnum
 
 
 """

@@ -67,7 +67,7 @@ function Symbols(cmd::MachOLoadCmdRef{H,MachOSymtabCmd{H}}) where {H <: MachOHan
 end
 
 handle(syms::MachOSymbols) = handle(syms.cmd)
-endof(syms::MachOSymbols) = symtab_num_symbols(syms.cmd)
+lastindex(syms::MachOSymbols) = symtab_num_symbols(syms.cmd)
 
 symtab_entry_offset(syms::MachOSymbols) = symtab_symbols_offset(syms.cmd)
 symtab_entry_size(syms::MachOSymbols) = sizeof(symtab_entry_type(syms))

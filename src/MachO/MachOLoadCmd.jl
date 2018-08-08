@@ -52,11 +52,9 @@ Allows iteration over the LoadCmds within a Mach-O file.
 
 ### Iteration
   - getindex()
-  - endof()
+  - lastindex()
+  - iterate()
   - length()
-  - start()
-  - next()
-  - done()
   - eltype()
 
 ### Access
@@ -146,10 +144,8 @@ handle(lcs::MachOLoadCmds) = lcs.handle
 header(lcs::MachOLoadCmds) = header(handle(lcs))
 
 # Iteration
-start(lcs::MachOLoadCmds) = start(lcs.cmds)
-endof(lcs::MachOLoadCmds) = endof(lcs.cmds)
-done(lcs::MachOLoadCmds, idx) = done(lcs.cmds, idx)
-next(lcs::MachOLoadCmds, idx) = (lcs[idx], idx+1)
+iterate(lcs::MachOLoadCmds, idx=1) = idx > length(lcs) ? nothing : (lcs.cmds[idx], idx+1)
+lastindex(lcs::MachOLoadCmds) = lastindex(lcs.cmds)
 length(lcs::MachOLoadCmds) = length(lcs.cmds)
 eltype(::Type{S}) where {S <: MachOLoadCmds} = MachOLoadCmdRef
 function getindex(l::MachOLoadCmds, idx)

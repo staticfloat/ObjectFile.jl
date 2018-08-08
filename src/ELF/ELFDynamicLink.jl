@@ -45,7 +45,7 @@ function DynamicLinks(oh::ELFHandle)
 end
 Section(dls::ELFDynamicLinks) = dls.section_ref
 handle(dls::ELFDynamicLinks) = handle(Section(dls))
-endof(dls::ELFDynamicLinks) = endof(dls.links)
+endof(dls::ELFDynamicLinks) = lastindex(dls.links)
 getindex(dls::ELFDynamicLinks, idx) = getindex(dls.links, idx)
 
 """

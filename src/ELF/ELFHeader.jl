@@ -45,7 +45,7 @@ function filetype(e_type)
     if haskey(ET_TYPES, e_type)
         return ET_TYPES[e_type]
     end
-    return string("Unknown (0x",hex(e_type),")")
+    return string("Unknown (0x",string(e_type, base=16),")")
 end
 
 
@@ -53,7 +53,7 @@ function machinetype(e_machine)
     if haskey(EM_MACHINES, e_machine)
         return EM_MACHINES[e_machine]
     end
-    return string("Unknown (0x",hex(e_machine),")")
+    return string("Unknown (0x",string(e_machine, base=16),")")
 end
 
 
@@ -62,14 +62,14 @@ function show(io::IO, header::ELFHeader)
     println(io, "  Type ", filetype(header.e_type))
     println(io, "  Machine ", machinetype(header.e_machine))
     # Skip e_version (not particularly useful)
-    println(io, "  Entrypoint ", "0x", hex(header.e_entry))
-    println(io, "  PH Offset ", "0x", hex(header.e_phoff))
-    println(io, "  SH Offset ", "0x", hex(header.e_shoff))
+    println(io, "  Entrypoint ", "0x", string(header.e_entry, base=16))
+    println(io, "  PH Offset ", "0x", string(header.e_phoff, base=16))
+    println(io, "  SH Offset ", "0x", string(header.e_shoff, base=16))
     # Skip flags
-    println(io, "  Header Size ", "0x", hex(header.e_ehsize))
-    println(io, "  PH Entry Size ", "0x", hex(header.e_phentsize))
-    println(io, "  PH Entry Count ", dec(header.e_phnum))
-    println(io, "  SH Entry Size ", "0x", hex(header.e_shentsize))
-    println(io, "  SH Entry Count ", dec(header.e_shnum))
-    println(io, "  Strtab Index ", dec(header.e_shstrndx))
+    println(io, "  Header Size ", "0x", string(header.e_ehsize, base=16))
+    println(io, "  PH Entry Size ", "0x", string(header.e_phentsize, base=16))
+    println(io, "  PH Entry Count ", string(header.e_phnum, base=10))
+    println(io, "  SH Entry Size ", "0x", string(header.e_shentsize, base=16))
+    println(io, "  SH Entry Count ", string(header.e_shnum, base=10))
+    println(io, "  Strtab Index ", string(header.e_shstrndx, base=10))
 end

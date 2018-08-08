@@ -25,17 +25,17 @@ function show_collection(io::IO, stuff::ST, ::Type{H}) where {ST} where {H <: Ob
     if limited && length(stuff) > 20
         for idx in 1:10
             print(io, "\n  [$(idx)] ")
-            showcompact(io, stuff[idx])
+            show(IOContext(io, :compact => true), stuff[idx])
         end
         print(io, "\n   \u2026")
         for idx in length(stuff)-10:length(stuff)
             print(io, "\n  [$(idx)] ")
-            showcompact(io, stuff[idx])
+            show(IOContext(io, :compact => true), stuff[idx])
         end
     else
         for idx in 1:length(stuff)
             print(io, "\n  [$(idx)] ")
-            showcompact(io, stuff[idx])
+            show(IOContext(io, :compact => true), stuff[idx])
         end
     end
 end

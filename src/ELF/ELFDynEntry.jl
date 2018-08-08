@@ -70,7 +70,7 @@ function dyn_entry_type_string(d::ELFDynEntry)
     if haskey(DYNAMIC_TYPE, d_type)
         return DYNAMIC_TYPE[d_type]
     end
-    return string("Unknown DynEntry Type (0x", hex(d_type), ")")
+    return string("Unknown DynEntry Type (0x", string(d_type, base=16), ")")
 end
 
 struct ELFDynEntryRef{H <: ELFHandle}

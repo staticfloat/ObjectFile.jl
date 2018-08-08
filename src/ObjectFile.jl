@@ -1,6 +1,4 @@
-__precompile__()
 module ObjectFile
-using Compat
 using Reexport
 
 # Include base utilities

@@ -340,9 +340,9 @@ function show(io::IO, s::Union{Section{H},SectionRef{H}}) where {H <: ObjectHand
     if !get(io, :compact, false)
         println(io)
         println(io, "       Name: $(section_name(s))")
-        println(io, "       Size: 0x$(hex(section_size(s)))")
-        println(io, "     Offset: 0x$(hex(section_offset(s)))")
-        print(io,   "    Address: 0x$(hex(section_address(s)))")
+        println(io, "       Size: 0x$(string(section_size(s), base=16))")
+        println(io, "     Offset: 0x$(string(section_offset(s), base=16))")
+        print(io,   "    Address: 0x$(string(section_address(s), base=16))")
     else
         print(io, " \"$(section_name(s))\"")
     end

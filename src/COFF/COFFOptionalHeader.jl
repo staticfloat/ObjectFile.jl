@@ -116,7 +116,7 @@ function read(io::IO, ::Type{COFFOptionalHeader})
         dirs = unpack(io, COFFDataDirectories)
         return COFFOptionalHeader64(standard, windows, dirs)
     else
-        error("Unknown COFF optional header magic 0x$(hex(standard.Magic))")
+        error("Unknown COFF optional header magic 0x$(string(standard.Magic, base=16))")
     end
 end
 

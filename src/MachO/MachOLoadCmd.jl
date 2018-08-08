@@ -201,7 +201,7 @@ function load_cmd_type_string(header::MachOLoadCmdHeader{H}) where {H <: MachOHa
     if haskey(LCTYPES, header.cmd)
         return LCTYPES[header.cmd]
     end
-    return string("Unknown Type (0x", hex(header.cmd), ")")
+    return string("Unknown Type (0x", string(header.cmd, base=16), ")")
 end
 
 """

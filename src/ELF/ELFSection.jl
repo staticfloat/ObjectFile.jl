@@ -107,6 +107,6 @@ function section_type_string(s::ELFSection)
     if haskey(SHT_TYPES, sh_type)
         return SHT_TYPES[sh_type]
     end
-    return string("Unknown Section Type (0x", hex(sh_type), ")")
+    return string("Unknown Section Type (0x", string(sh_type, base=16), ")")
 end
 @derefmethod section_type_string(s::ELFSectionRef)

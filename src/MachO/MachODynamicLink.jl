@@ -14,7 +14,7 @@ MachODynamicLinks(oh::MachOHandle) = MachODynamicLinks(MachOLoadCmds(oh))
 DynamicLinks(oh::MachOHandle) = MachODynamicLinks(oh)
 DynamicLinks(lcs::MachOLoadCmds) = MachODynamicLinks(lcs)
 
-endof(dls::MachODynamicLinks) = endof(dls.cmds)
+endof(dls::MachODynamicLinks) = lastindex(dls.cmds)
 function getindex(dls::MachODynamicLinks, idx)
     return MachODynamicLink(dls, dls.cmds[idx])
 end

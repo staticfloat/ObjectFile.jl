@@ -107,7 +107,7 @@ Return the list of paths that will be searched for shared libraries.
 """
 @mustimplement rpaths(rpath::RPath)
 
-endof(rpath::RPath) = endof(rpaths(rpath))
+endof(rpath::RPath) = lastindex(rpaths(rpath))
 start(rpath::RPath) = 1
 done(rpath::RPath, idx) = idx > length(rpath)
 next(rpath::RPath, idx) = (rpath[idx], idx+1)

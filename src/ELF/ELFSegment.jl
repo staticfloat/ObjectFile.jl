@@ -162,7 +162,7 @@ function segment_type_string(s::ELFSegment)
     if haskey(P_TYPE, s_type)
         return P_TYPE[s_type]
     end
-    return string("Unknown Segment Type (0x", hex(s_type), ")")
+    return string("Unknown Segment Type (0x", string(s_type, base=16), ")")
 end
 @derefmethod segment_type_string(s::ELFSegmentRef)
 
@@ -170,15 +170,15 @@ function show(io::IO, seg::Union{ELFSegment,ELFSegmentRef})
     print(io, "ELFSegment")
 
     if !get(io, :compact, false)
-        fsz = hex(segment_file_size(seg))
-        msz = hex(segment_memory_size(seg))
-        paddr = hex(segment_physical_address(seg))
-        vaddr = hex(segment_virtual_address(seg))
+        fsz = string(segment_file_size(seg), base=16)
+        msz = string(segment_memory_size(seg), base=16)
+        paddr = string(segment_physical_address(seg), base=16)
+        vaddr = string(segment_virtual_address(seg), base=16)
 
         println(io)
         println(io, "       Type: $(segment_type_string(seg))")
         println(io, "       Size: (File: 0x$(fsz),   Mem: 0x$(msz))")
-        println(io, "     Offset: 0x$(hex(segment_offset(seg)))")
+        println(io, "     Offset: 0x$(string(segment_offset(seg), base=16))")
         print(io,   "    Address:  (Phy: 0x$(paddr) Virt: 0x$(vaddr))")
     else
         print(io, " $(segment_type_string(seg))")

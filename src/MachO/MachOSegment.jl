@@ -20,7 +20,7 @@ function Segments(oh::MachOHandle)
 end
 
 handle(segments::MachOSegments) = segments.handle
-endof(segments::MachOSegments) = endof(segments.segments)
+endof(segments::MachOSegments) = lastindex(segments.segments)
 function getindex(segs::MachOSegments{H}, idx) where {H <: MachOHandle}
     seg = MachOSegment(segs.segments[idx])
     return MachOSegmentRef(segs, seg, UInt32(idx))
@@ -86,13 +86,13 @@ function show(io::IO, seg::Union{MachOSegment,MachOSegmentRef})
     print(io, "MachO Segment", is64bit(seg) ? " (64 bit)" : "")
 
     if !get(io, :compact, false)
-        fsz = hex(segment_file_size(seg))
-        msz = hex(segment_memory_size(seg))
+        fsz = string(segment_file_size(seg), base=16)
+        msz = string(segment_memory_size(seg), base=16)
 
         println(io)
         println(io, "       Name: $(segment_name(seg))")
         println(io, "       Size: (File: 0x$(fsz),   Mem: 0x$(msz))")
-        println(io, "     Offset: 0x$(hex(segment_offset(seg)))")
+        println(io, "     Offset: 0x$(string(segment_offset(seg), base=16))")
         print(io,   "   Sections: $(segment_num_sections(seg))")
     else
         print(io, " $(segment_name(seg))")

@@ -97,7 +97,7 @@ function MachOSections(segs::MachOSegments)
 end
 
 handle(sections::MachOSections) = sections.handle
-endof(sections::MachOSections) = endof(sections.sections)
+endof(sections::MachOSections) = lastindex(sections.sections)
 getindex(sections::MachOSections, idx) = getindex(sections.sections, idx)
 
 Sections(segs::MachOSegments) = MachOSections(segs)

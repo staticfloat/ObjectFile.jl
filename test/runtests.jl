@@ -1,5 +1,5 @@
 using ObjectFile
-using Compat, Compat.Test
+using Test
 
 function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     # Actually read it in

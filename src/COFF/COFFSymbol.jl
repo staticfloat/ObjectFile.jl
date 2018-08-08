@@ -159,7 +159,7 @@ function symbol_type_string(sym::COFFSymtabEntry)
 
     # If we didn't get ANY info, complain
     if isempty(type_string)
-        string("Unknown Symbol Type (0x", hex(sym.Type), ")")
+        string("Unknown Symbol Type (0x", string(sym.Type, base=16), ")")
     end
     
     return type_string

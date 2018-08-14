@@ -71,5 +71,5 @@ rpaths(crp::COFFRPath) = String[]
 
 # COFF files don't have an RPath, but they _do_ always search the $ORIGIN
 function canonical_rpaths(crp::COFFRPath)
-    return [dirname(path(handle(crp)))]
+    return [abspath(dirname(path(handle(crp))) * "/")]
 end

@@ -30,6 +30,7 @@ include("ELFSegment.jl")
 include("ELFSymbol.jl")
 include("ELFDynEntry.jl")
 include("ELFDynamicLink.jl")
+include("ELFVersion.jl")
 
 # Holdovers from ObjFileBase that I haven't cleaned up yet
 #include("ELFRelocation.jl")

@@ -162,3 +162,18 @@ end
 # Run COFF tests
 test_libfoo_and_fooifier("./win32/fooifier.exe", "./win32/libfoo.dll")
 test_libfoo_and_fooifier("./win64/fooifier.exe", "./win64/libfoo.dll")
+
+
+# Ensure that ELF version stuff works
+@testset "ELF Version Info Parsing" begin
+    libstdcxx_path = "./linux64/libstdc++.so.6"
+
+    # Extract all pieces of `.gnu.version_d` from libstdc++.so, find the `GLIBCXX_*`
+    # symbols, and use the maximum version of that to find the GLIBCXX ABI version number
+    version_symbols = readmeta(libstdcxx_path) do oh
+        unique(vcat((x -> x.names).(ObjectFile.ELF.ELFVersionData(oh))...))
+    end
+    version_symbols = filter(x -> startswith(x, "GLIBCXX_"), version_symbols)
+    max_version = maximum([VersionNumber(split(v, "_")[2]) for v in version_symbols])
+    @test max_version == v"3.4.25"
+end

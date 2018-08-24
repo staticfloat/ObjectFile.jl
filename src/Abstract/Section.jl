@@ -6,7 +6,7 @@ export Sections,
 
 # Export Section API
 export Section,
-       deref, contents, section_name, section_size, section_offset,
+       deref, section_name, section_size, section_offset,
        section_address
 
 # Export Datatypes
@@ -136,7 +136,7 @@ subclasses must implement marked in emphasis:
   - deref()
 
 ### IO-like operations:
-  - contents()
+  - read()
 
 ### Format-specific properties:
   - *section_name()*
@@ -152,17 +152,16 @@ abstract type Section{H<:ObjectHandle} end
 deref(section::Section) = section
 
 """
-    contents(oh::ObjectHandle, section::Section)
+    read(oh::ObjectHandle, section::Section)
 
 Read the contents of the section referred to by `section` from the given
 `ObjectHandle`, returning a `Vector{UInt8}`.
 """
-function contents(oh::H, section::Section{H}) where {H<:ObjectHandle}
+function read(oh::H, section::Section{H}) where {H<:ObjectHandle}
     # Seek to the section's location, then read it in!
     seek(oh, section_offset(section))
-    return read(oh, size(section))
+    return read(oh, section_size(section))
 end
-
 
 """
     section_name(section::Section)

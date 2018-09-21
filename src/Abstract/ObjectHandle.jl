@@ -139,7 +139,7 @@ function readmeta(io::IO)
 end
 
 function readmeta(file::AbstractString)
-    warn("`readmeta(file::AbstractString)` is deprecated, use the do-block variant instead.")
+    @warn("`readmeta(file::AbstractString)` is deprecated, use the do-block variant instead.")
     return readmeta(open(file, "r"))
 end
 

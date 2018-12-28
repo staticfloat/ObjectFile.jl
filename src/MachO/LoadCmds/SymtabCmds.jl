@@ -4,6 +4,9 @@
     stroff::UInt32
     strsize::UInt32
 end
+
+show(io::IO, lc::MachOSymtabCmd) = write(io, "SymtabCmd")
+
 # Accessors for symbols info
 symtab_symbols_offset(cmd::MachOSymtabCmd) = cmd.symoff
 symtab_num_symbols(cmd::MachOSymtabCmd) = cmd.nsyms

@@ -52,6 +52,9 @@ end
     flags::UInt32
 end
 
+show(io::IO, lc::MachOSegment32Cmd) = write(io, "Segment32Cmd \"$(segment_name(lc))\"")
+show(io::IO, lc::MachOSegment64Cmd) = write(io, "Segment64Cmd \"$(segment_name(lc))\"")
+
 segment_name(cmd::MachOSegmentCmd) = cmd.segname
 segment_offset(cmd::MachOSegmentCmd) = cmd.fileoff
 segment_file_size(cmd::MachOSegmentCmd) = cmd.filesize

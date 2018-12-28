@@ -214,7 +214,7 @@ function show(io::IO, lcs::MachOLoadCmds)
     print(io, "MachO Load Commands")
     for lc in lcs
         print(io, "\n  ")
-        showcompact(io, lc)
+        show(io, lc)
     end
 end
 

@@ -44,6 +44,8 @@ struct MachOLoadDylibCmd{H <: MachOHandle} <: MachOLoadCmd{H}
     name::String
 end
 
+show(io::IO, lc::MachOLoadDylibCmd) = write(io, "LoadDylibCmd: \"$(dylib_name(lc))\"")
+
 
 """
     MachOIdDylibCmd
@@ -59,6 +61,7 @@ struct MachOIdDylibCmd{H <: MachOHandle} <: MachOLoadCmd{H}
     stub::MachODylibStub
     name::String
 end
+show(io::IO, lc::MachOIdDylibCmd) = write(io, "IdDylibCmd: \"$(dylib_name(lc))\"")
 
 """
     MachODylibCmd
@@ -133,6 +136,8 @@ struct MachORPathCmd{H <: MachOHandle} <: MachOLoadCmd{H}
     rpath_offset::UInt32
     rpath::String
 end
+
+show(io::IO, lc::MachORPathCmd) = write(io, "RPathCmd: \"$(rpath(lc))\"")
 
 """
     MachOLoadCmd(oh::MachOHeader, CT::Type{MachORPathCmd}, header)

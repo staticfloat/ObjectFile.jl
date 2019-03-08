@@ -54,6 +54,7 @@ Allows iteration over the LoadCmds within a Mach-O file.
   - getindex()
   - lastindex()
   - iterate()
+  - keys()
   - length()
   - eltype()
 
@@ -144,6 +145,7 @@ handle(lcs::MachOLoadCmds) = lcs.handle
 header(lcs::MachOLoadCmds) = header(handle(lcs))
 
 # Iteration
+keys(lcs::MachOLoadCmds) = 1:length(lcs)
 iterate(lcs::MachOLoadCmds, idx=1) = idx > length(lcs) ? nothing : (lcs.cmds[idx], idx+1)
 lastindex(lcs::MachOLoadCmds) = lastindex(lcs.cmds)
 length(lcs::MachOLoadCmds) = length(lcs.cmds)

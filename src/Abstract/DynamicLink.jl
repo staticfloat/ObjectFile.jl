@@ -1,6 +1,6 @@
 # Export DynamicLinks API
 export DynamicLinks,
-       getindex, length, iterate, lastindex, eltype,
+       getindex, length, iterate, keys, lastindex, eltype,
        handle, header
        
 # Export Dynamic Link API
@@ -12,7 +12,7 @@ export RPath,
        handle, rpaths, canonical_rpaths, find_library
        
 # Import iteration protocol
-import Base: iterate, length, lastindex
+import Base: iterate, keys, length, lastindex
 
 """
     DynamicLinks
@@ -28,6 +28,7 @@ given below, with methods that subclasses must implement marked in emphasis:
   - *getindex()*
   - *lastindex()*
   - iterate()
+  - keys()
   - eltype()
 
 ### Misc.
@@ -36,6 +37,7 @@ given below, with methods that subclasses must implement marked in emphasis:
 abstract type DynamicLinks{H <: ObjectHandle} end
 
 @mustimplement lastindex(dls::DynamicLinks)
+keys(dls::DynamicLinks) = 1:length(dls)
 iterate(dls::DynamicLinks, idx=1) = idx > length(dls) ? nothing : (dls[idx], idx+1)
 length(dls::DynamicLinks) = lastindex(dls)
 eltype(::Type{D}) where {D <: DynamicLinks} = DynamicLink
@@ -107,6 +109,7 @@ Return the list of paths that will be searched for shared libraries.
 @mustimplement rpaths(rpath::RPath)
 
 lastindex(rpath::RPath) = lastindex(rpaths(rpath))
+keys(rpath::RPath) = 1:length(rpath)
 iterate(rpaht::RPath, idx=1) = idx > length(rpath) ? nothing : (rpath[idx], idx+1)
 length(rpath::RPath) = lastindex(rpath)
 eltype(::Type{D}) where {D <: RPath} = String

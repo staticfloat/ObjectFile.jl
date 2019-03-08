@@ -8,7 +8,7 @@ export Segment, deref, segment_name, segment_offset, segment_file_size,
 export SegmentRef, segment_number
 
 # Import Base stuff for extension
-import Base: getindex, length, eltype, findfirst, findall, iterate, lastindex
+import Base: getindex, length, eltype, findfirst, findall, iterate, keys, lastindex
 
 """
     Segments
@@ -28,6 +28,7 @@ in emphasis:
   - *lastindex()*
   - length()
   - iterate()
+  - keys()
   - eltype()
 
 ### Search
@@ -42,6 +43,7 @@ abstract type Segments{H<:ObjectHandle} end
 # Fairly simple iteration interface specification
 @mustimplement lastindex(segs::Segments)
 length(segs::Segments) = lastindex(segs)
+keys(segs::Segments) = 1:length(segs)
 iterate(segs::Segments, idx=1) = idx > length(segs) ? nothing : (segs[idx], idx+1)
 eltype(::Type{S}) where {S <: Segments} = SegmentRef
 

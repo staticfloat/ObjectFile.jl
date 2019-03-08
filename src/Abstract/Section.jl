@@ -1,6 +1,6 @@
 # Export Sections API
 export Sections,
-       getindex, length, lastindex, iterate, eltype,
+       getindex, length, lastindex, iterate, keys, eltype,
        findall, findfirst,
        handle, header, format_string
 
@@ -15,7 +15,7 @@ export SectionRef,
 
 # Import Base methods for extension
 import Base: read, seek, seekstart, eof, length, eltype, findall,
-             findfirst, iterate, lastindex
+             findfirst, iterate, keys, lastindex
 
 """
     Sections
@@ -35,6 +35,7 @@ in emphasis:
   - *lastindex()*
   - length()
   - iterate()
+  - keys()
   - eltype()
 
 ### Search
@@ -49,6 +50,7 @@ abstract type Sections{H<:ObjectHandle} end
 # Fairly simple iteration interface specification
 @mustimplement lastindex(sections::Sections)
 length(sections::Sections) = lastindex(sections)
+keys(sections::Sections) = 1:length(sections)
 iterate(sections::Sections, idx=1) = idx > length(sections) ? nothing : (sections[idx], idx+1)
 eltype(::Type{S}) where {S <: Sections} = SectionRef
 

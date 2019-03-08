@@ -121,10 +121,10 @@ Command.
 """
 dylib_compatibilty(cmd::DylibCmd) = cmd.stub.compatibilty
 
-@derefmethod dylib_name(cmd::MachOLoadCmdRef{T}) where {T <: DylibCmd}
-@derefmethod dylib_timestamp(cmd::MachOLoadCmdRef{T}) where {T <: DylibCmd}
-@derefmethod dylib_version(cmd::MachOLoadCmdRef{T}) where {T <: DylibCmd}
-@derefmethod dylib_compatibilty(cmd::MachOLoadCmdRef{T}) where {T <: DylibCmd}
+@derefmethod dylib_name(cmd::MachOLoadCmdRef{H, T}) where {H <: MachOHandle} where {T <: DylibCmd}
+@derefmethod dylib_timestamp(cmd::MachOLoadCmdRef{H, T}) where {H <: MachOHandle} where {T <: DylibCmd}
+@derefmethod dylib_version(cmd::MachOLoadCmdRef{H, T}) where {H <: MachOHandle} where {T <: DylibCmd}
+@derefmethod dylib_compatibilty(cmd::MachOLoadCmdRef{H, T}) where {H <: MachOHandle} where {T <: DylibCmd}
 
 
 """

@@ -6,30 +6,12 @@ export ELFSegments, ELFSegment, ELFSegment32, ELFSegment64
 ELF segment header table type, containing information about the number of
 segments within the ELF object, the location of the segment headers, etc...
 """
-struct ELFSegments{H <: ELFHandle}
+struct ELFSegments{H <: ELFHandle} <: Segments{H}
     handle::H
 end
 Segments(oh::ELFHandle) = ELFSegments(oh)
 handle(segs::ELFSegments) = segs.handle
-
-# Iteration
-iterate(segs::ELFSegments, idx=1) = idx > length(segs) ? nothing : (segs[idx], idx+1)
 lastindex(segs::ELFSegments) = header(handle(segs)).e_phnum
-length(segs::ELFSegments) = lastindex(segs)
-eltype(::Type{S}) where {S <: ELFSegments} = ELFSegmentRef
-
-function getindex(segs::ELFSegments{H}, idx) where {H <: ELFHandle}
-    # Punt off to `getindex_ref`
-    oh = handle(segs)
-    return getindex_ref(
-        segs,
-        segment_header_offset(oh),
-        segment_header_size(oh),
-        segment_header_type(oh),
-        SegmentRef,
-        idx
-    )
-end
 
 
 """

@@ -6,7 +6,7 @@ using StructIO
 using ObjectFile
 import ObjectFile: DynamicLink, DynamicLinks, RPath, ObjectHandle, Section, Sections, SectionRef,
                    Segment, Segments, SegmentRef, StrTab, Symbols, SymtabEntry, SymbolRef,
-                   getindex, length, lastindex, iterate, eltype, handle, header, path,
+                   getindex, length, lastindex, iterate, keys, eltype, handle, header, path,
                    rpaths, canonical_rpaths, find_library, readmeta, seek, seekstart, skip,
                    iostream, position, read, readuntil, eof, endianness, is64bit, isrelocatable,
                    isexecutable, islibrary, isdynamic, mangle_section_name, mangle_symbol_name,

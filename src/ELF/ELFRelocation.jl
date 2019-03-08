@@ -53,6 +53,7 @@ function getindex{T}(s::Relocations{T},n)
     RelocationRef{T}(s.sec.handle,unpack(s.sec.handle, T))
 end
 
+keys(s::Relocations) = 1:length(s)
 iterate(s::Relocations, idx=1) = idx > length(s) ? nothing : (s[idx], idx+1)
 
 # Utilities for extracting information from relocation entries

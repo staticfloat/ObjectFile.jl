@@ -110,7 +110,7 @@ Return the list of paths that will be searched for shared libraries.
 
 lastindex(rpath::RPath) = lastindex(rpaths(rpath))
 keys(rpath::RPath) = 1:length(rpath)
-iterate(rpaht::RPath, idx=1) = idx > length(rpath) ? nothing : (rpath[idx], idx+1)
+iterate(rpath::RPath, idx=1) = idx > length(rpath) ? nothing : (rpath[idx], idx+1)
 length(rpath::RPath) = lastindex(rpath)
 eltype(::Type{D}) where {D <: RPath} = String
 getindex(rpath::RPath, idx) = rpaths(rpath)[idx]

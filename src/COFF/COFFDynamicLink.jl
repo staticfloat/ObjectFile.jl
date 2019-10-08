@@ -24,18 +24,30 @@ function import_name(oh::COFFHandle, idata::COFFSectionRef, iid)
     return strip(readuntil(oh, '\0'), '\0')
 end
 
+function find_section_for_rva(oh::H, rva) where {H <: COFFHandle}
+    for s in Sections(oh)
+        if section_address(s) < rva && section_address(s) + section_size(s) > rva
+            return s
+        end
+    end
+    error("Unable to find section for RVA $(rva)")
+end
+
 function COFFDynamicLinks(oh::H) where {H <: COFFHandle}
-    # Find the import table section
-    idata = findfirst(Sections(oh), ".idata")
+    # Start by finding the virtual address of the import table
+    import_table_rva = oh.opt_header.directories.ImportTable.VirtualAddress
+
+    # Next figure out which section that belongs to:
+    s = find_section_for_rva(oh, import_table_rva)
 
     # We'll load in all the ImageImportDescriptors we can
     iids = COFFImageImportDescriptor[]
 
     # Read in ImageImportDescriptors until it's all NULL
-    seek(oh, section_offset(idata))
+    seek(oh, (import_table_rva - section_address(s)) +  section_offset(s))
     while true
         iid = unpack(oh, COFFImageImportDescriptor)
-        if iid.Name == 0 && iid.FirstThunk == 0
+        if iid.Name == 0 && iid.FirstThunk == 0 && iid.Characteristics == 0 && iid.ForwarderChain == 0 && iid.TimeDateStamp == 0
             break
         else
             push!(iids, iid)
@@ -43,7 +55,7 @@ function COFFDynamicLinks(oh::H) where {H <: COFFHandle}
     end
 
     # Now, jump around and get all the strings
-    links = [COFFDynamicLink{H}(import_name(oh, idata, iid)) for iid in iids]
+    links = [COFFDynamicLink{H}(import_name(oh, s, iid)) for iid in iids]
     return COFFDynamicLinks(oh, links)
 end
 DynamicLinks(oh::COFFHandle) = COFFDynamicLinks(oh)

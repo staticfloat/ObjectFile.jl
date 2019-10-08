@@ -26,11 +26,11 @@ end
 
 function find_section_for_rva(oh::H, rva) where {H <: COFFHandle}
     for s in Sections(oh)
-        if section_address(s) < rva && section_address(s) + section_size(s) > rva
+        if section_address(s) <= rva && section_address(s) + section_size(s) > rva
             return s
         end
     end
-    error("Unable to find section for RVA $(rva)")
+    error("Unable to find section for RVA $(repr(rva))")
 end
 
 function COFFDynamicLinks(oh::H) where {H <: COFFHandle}

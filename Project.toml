@@ -1,0 +1,13 @@
+name = "ObjectFile"
+uuid = "d8793406-e978-5875-9003-1fc021f44a92"
+authors = ["Elliot Saba <staticfloat@gmail.com>"]
+version = "0.3.3"
+
+[deps]
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+StructIO = "53d494c1-5632-5724-8f4c-31dff12d585f"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+StructIO = "≥ 0.3"
+julia = "≥ 1"

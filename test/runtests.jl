@@ -177,3 +177,28 @@ test_libfoo_and_fooifier("./win64/fooifier.exe", "./win64/libfoo.dll")
     max_version = maximum([VersionNumber(split(v, "_")[2]) for v in version_symbols])
     @test max_version == v"3.4.25"
 end
+
+
+# Ensure that these tricksy win32 files work
+@testset "git win32 problems" begin
+    # Test that 6a66694a8dd5ca85bd96fe6236f21d5b183e7de6 fix worked
+    libmsobj_path = "./win32/msobj140.dll"
+
+    dynamic_links = readmeta(libmsobj_path) do oh
+        path.(DynamicLinks(oh))
+    end
+
+    @test "KERNEL32.dll" in dynamic_links
+    @test "api-ms-win-crt-heap-l1-1-0.dll" in dynamic_links
+    @test "api-ms-win-crt-convert-l1-1-0.dll" in dynamic_links
+    @test "api-ms-win-crt-runtime-l1-1-0.dll" in dynamic_links
+
+    whouses_exe = "./win32/WhoUses.exe"
+    dynamic_links = readmeta(whouses_exe) do oh
+        path.(DynamicLinks(oh))
+    end
+
+    @test "ADVAPI32.dll" in dynamic_links
+    @test "KERNEL32.dll" in dynamic_links
+    @test "libstdc++-6.dll" in dynamic_links
+end

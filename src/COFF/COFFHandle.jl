@@ -9,7 +9,7 @@ client applications will interact with COFF files.
 struct COFFHandle{T<:IO} <: ObjectHandle
     # Backing IOS and start point within the IOStream of this COFF object
     io::T
-    start::Int
+    start::Int64
 
     # The parsed-out header of the COFF object
     header::COFFHeader
@@ -63,7 +63,7 @@ function readmeta(io::IO, ::Type{H}) where {H <: COFFHandle}
     opt_header = read(io, COFFOptionalHeader)
 
     # Construct our COFFHandle, pilfering the filename from the IOStream
-    return COFFHandle(io, start, header, header_offset, opt_header, path(io))
+    return COFFHandle(io, Int64(start), header, header_offset, opt_header, path(io))
 end
 
 

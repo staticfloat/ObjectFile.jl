@@ -14,7 +14,7 @@ client applications will interact with ELF files.
 struct ELFHandle{T<:IO} <: ObjectHandle
     # Backing IOS and start point within the IOStream of this ELF object
     io::T
-    start::Int
+    start::Int64
 
     # Elf Internal data such as endianness, version, OS ABI, etc...
     ei::ELFInternal
@@ -56,7 +56,7 @@ function readmeta(io::IO, ::Type{H}) where {H <: ELFHandle}
     seek(io, start)
 
     # Construct our ELFHandle, pilfering the filename from the IOStream
-    return ELFHandle(io, start, ei, header, path(io))
+    return ELFHandle(io, Int64(start), ei, header, path(io))
 end
 
 

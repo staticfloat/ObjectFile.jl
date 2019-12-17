@@ -46,7 +46,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             # Ensure that `dir_path` is one of the RPath entries
             rpath = RPath(oh_exe)
             can_paths = canonical_rpaths(rpath)
-            @test abspath(dir_path * "/") in can_paths
+            @test abspath(dir_path * Base.Filesystem.path_separator) in can_paths
 
             # Ensure that `fooifier` is going to try to load `libfoo`:
             foo_libs = find_libraries(oh_exe)

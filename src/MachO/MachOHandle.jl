@@ -3,7 +3,7 @@ export MachOHandle, FatMachOHandle
 struct MachOHandle{T <: IO} <: ObjectHandle
     # Backing IO and start point within the IOStream of this MachO object
     io::T
-    start::Int
+    start::Int64
 
     # The parsed-out header of the MachO object
     header::MachOHeader
@@ -30,7 +30,7 @@ function readmeta(io::IO,::Type{MachOHandle})
 
     # Unpack the header
     header = unpack(io, header_type, endianness)
-    return MachOHandle(io, start, header, path(io))
+    return MachOHandle(io, Int64(start), header, path(io))
 end
 
 ## IOStream-like operations:

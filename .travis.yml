@@ -8,6 +8,9 @@ arch:
   - x64
   - x86
 matrix:
+  exclude:
+    - os: osx
+      arch: x86
   allow_failures:
     - julia: nightly
     - arch: x86

@@ -124,7 +124,7 @@ function readmeta(io::IO)
         try
             return readmeta(io, T)
         catch e
-            if !isa(e,MagicMismatch)
+            if !isa(e,MagicMismatch) && !isa(e,EOFError)
                 rethrow(e)
             end
         end

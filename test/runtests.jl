@@ -1,6 +1,17 @@
 using ObjectFile
 using Test
 
+@testset "basic" begin
+    # Test that an empty file is a magic mismatch
+    mktempdir() do dir
+        fpath = joinpath(dir, "empty")
+        touch(fpath)
+        @test_throws MagicMismatch readmeta(fpath) do oh
+            @test false
+        end
+    end
+end
+
 function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     # Actually read it in
     oh_exe = readmeta(open(fooifier_path, "r"))

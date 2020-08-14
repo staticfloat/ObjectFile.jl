@@ -135,7 +135,7 @@ function canonical_rpaths(rpath::RPath)
         paths[idx] = abspath(paths[idx])
 
         # Make sure that if it's a directory, it _always_ has a trailing path separator.
-        if isdir(paths[idx]) && paths[idx][end] != Base.Filesystem.path_separator
+        if isdir(paths[idx]) && paths[idx][end:end] != Base.Filesystem.path_separator
             paths[idx] = paths[idx] * Base.Filesystem.path_separator
         end
     end

@@ -10,8 +10,9 @@
     const FAT_CIGAM = bswap(FAT_MAGIC)
 end
 
-const CPU_ARCH_MASK  = 0xff000000
-const CPU_ARCH_ABI64 = 0x01000000
+const CPU_ARCH_MASK     = 0xff000000
+const CPU_ARCH_ABI64    = 0x01000000
+const CPU_ARCH_ABI64_32 = 0x02000000
 
 @constants CPUTYPES "CPU_TYPE_" begin
     const CPU_TYPE_ANY          = reinterpret(UInt32,Int32(-1))
@@ -35,6 +36,8 @@ const CPU_ARCH_ABI64 = 0x01000000
     # skip
     const CPU_TYPE_POWERPC      = 18
     const CPU_TYPE_POWERPC64    = CPU_TYPE_POWERPC | CPU_ARCH_ABI64
+    const CPU_TYPE_ARM64        = CPU_TYPE_ARM | CPU_ARCH_ABI64
+    const CPU_TYPE_ARM64_32     = CPU_TYPE_ARM | CPU_ARCH_ABI64_32
 end
 
 # TODO subtype constants

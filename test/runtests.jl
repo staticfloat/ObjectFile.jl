@@ -16,7 +16,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     # Actually read it in
     oh_exe = readmeta(open(fooifier_path, "r"))
     oh_lib = readmeta(open(libfoo_path, "r"))
-    
+
     # Tease out some information from the containing folder name
     dir_path = basename(dirname(libfoo_path))
     types = Dict(
@@ -52,7 +52,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             @test isdynamic(oh_exe) && isdynamic(oh_lib)
         end
 
-        
+
         @testset "Dynamic Linking" begin
             # Ensure that `dir_path` is one of the RPath entries
             rpath = RPath(oh_exe)
@@ -98,7 +98,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
                 @test !isundef(syms_exe[main_idx_exe])
                 @test !isundef(syms_lib[foo_idx_lib])
             end
-            
+
             @test !islocal(syms_exe[foo_idx_exe])
             @test !islocal(syms_exe[main_idx_exe])
             @test !islocal(syms_lib[foo_idx_lib])
@@ -134,7 +134,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             tshow(sects)
             tshow(sects[1])
 
-            # Test showing of Segments on non-COFF 
+            # Test showing of Segments on non-COFF
             if !isa(oh_exe, COFFHandle)
                 segs = Segments(oh_lib)
                 tshow(segs)
@@ -149,7 +149,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             # Test showing of RPath and DynamicLinks
             rpath = RPath(oh_exe)
             tshow(rpath)
-            
+
             dls = DynamicLinks(oh_exe)
             tshow(dls)
             tshow(dls[1])
@@ -212,4 +212,11 @@ end
     @test "ADVAPI32.dll" in dynamic_links
     @test "KERNEL32.dll" in dynamic_links
     @test "libstdc++-6.dll" in dynamic_links
+end
+
+@testset "ELF large section extension" begin
+    readmeta("./linux64/largesectcount.o") do oh
+        @test length(Sections(oh)) == 65543
+        @test section_name(Sections(oh)[end]) == ".shstrtab"
+    end
 end

@@ -35,7 +35,7 @@ function readmeta(io::IO, ::Type{H}) where {H <: ELFHandle}
     start = position(io)
 
     # Check for magic bytes
-    magic = [read(io, UInt8) for idx in 1:4]    
+    magic = [read(io, UInt8) for idx in 1:4]
     if any(magic .!= elven_magic)
         msg = """
         Magic Number 0x$(join(string.(magic, base=16),"")) does not match expected ELF
@@ -78,7 +78,11 @@ mangle_symbol_name(oh::ELFHandle, name::AbstractString) = name
 format_string(::Type{H}) where {H <: ELFHandle} = "ELF"
 
 # Section information
-section_header_offset(oh::ELFHandle) = header(oh).e_shoff
+
+# The section entry at index 0 is SHN_UNDEF of section type SHT_NULL. It is not
+# a real section and may actually contain extension data. Do not return it to
+# avoid confusing clients
+section_header_offset(oh::ELFHandle) = header(oh).e_shoff + section_header_size(oh)
 section_header_size(oh::ELFHandle) = header(oh).e_shentsize
 function section_header_type(oh::H) where {H <: ELFHandle}
     if is64bit(oh)

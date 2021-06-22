@@ -21,7 +21,7 @@ struct ELFStrTab{H <: ELFHandle} <: StrTab{H}
             """)
             @warn(replace(msg, "\n" => " "), key=(handle(section), section_idx))
         end
-        
+
         return new(section)
     end
 end
@@ -59,7 +59,14 @@ construct an `StrTab` object from.  The returned value is an index (e.g. it is
 1-based, not zero-based as the value within the ELF object itself).
 """
 function section_header_strtab_index(oh::ELFHandle)
-    return header(oh).e_shstrndx + 1
+    head = header(oh)
+    if head.e_shoff != 0 && head.e_shnum == 0
+        # ELF Large Sections extension. Actual strtab index is the sh_link
+        # field of the SHN_UNDEF section
+        seek(oh, head.e_shoff)
+        return unpack(oh, section_header_type(oh)).sh_link
+    end
+    return head.e_shstrndx
 end
 
 function strtab_lookup(strtab::ELFStrTab, index)

@@ -17,8 +17,18 @@ Sections(oh::ELFHandle) = ELFSections(oh)
 
 # Implement Sections API
 handle(sections::ELFSections) = sections.handle
-lastindex(sections::ELFSections) = header(handle(sections)).e_shnum
-
+function lastindex(sections::ELFSections)
+    head = header(handle(sections))
+    head.e_shoff == 0 && return 0
+    if head.e_shnum == 0
+        # Large section extension. Number of sections is actually stored in the
+        # sh_size field of the undef section
+        seek(handle(sections), head.e_shoff)
+        return unpack(handle(sections), section_header_type(handle(sections))).sh_size - 1
+    end
+    # Exclude the SHT_NULL section
+    return head.e_shnum - 1
+end
 
 """
     ELFSection

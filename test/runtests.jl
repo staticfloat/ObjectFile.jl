@@ -16,7 +16,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     # Actually read it in
     oh_exe = readmeta(open(fooifier_path, "r"))
     oh_lib = readmeta(open(libfoo_path, "r"))
-    
+
     # Tease out some information from the containing folder name
     dir_path = basename(dirname(libfoo_path))
     types = Dict(
@@ -52,7 +52,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             @test isdynamic(oh_exe) && isdynamic(oh_lib)
         end
 
-        
+
         @testset "Dynamic Linking" begin
             # Ensure that `dir_path` is one of the RPath entries
             rpath = RPath(oh_exe)
@@ -98,7 +98,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
                 @test !isundef(syms_exe[main_idx_exe])
                 @test !isundef(syms_lib[foo_idx_lib])
             end
-            
+
             @test !islocal(syms_exe[foo_idx_exe])
             @test !islocal(syms_exe[main_idx_exe])
             @test !islocal(syms_lib[foo_idx_lib])
@@ -134,7 +134,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             tshow(sects)
             tshow(sects[1])
 
-            # Test showing of Segments on non-COFF 
+            # Test showing of Segments on non-COFF
             if !isa(oh_exe, COFFHandle)
                 segs = Segments(oh_lib)
                 tshow(segs)
@@ -149,12 +149,24 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
             # Test showing of RPath and DynamicLinks
             rpath = RPath(oh_exe)
             tshow(rpath)
-            
+
             dls = DynamicLinks(oh_exe)
             tshow(dls)
             tshow(dls[1])
         end
     end
+end
+
+function test_fat_libfoo(file)
+    oh = readmeta(open(file, "r"))
+    @test isa(oh, FatMachOHandle)
+    local (ntotal, n64) = (0, 0)
+    for coh in oh
+        ntotal += 1
+        n64 += is64bit(coh)
+    end
+    @test ntotal == 2
+    @test n64 == 1
 end
 
 # Run ELF tests
@@ -163,12 +175,7 @@ test_libfoo_and_fooifier("./linux64/fooifier", "./linux64/libfoo.so")
 
 # Run MachO tests
 test_libfoo_and_fooifier("./mac64/fooifier", "./mac64/libfoo.dylib")
-
-# Ensure that fat Mach-O files don't look like anything to us
-@testset "macfat" begin
-    @test_throws ObjectFile.MagicMismatch readmeta(open("./macfat/fooifier","r"))
-    @test_throws ObjectFile.MagicMismatch readmeta(open("./macfat/libfoo.dylib","r"))
-end
+test_fat_libfoo("./mac64/libfoo_fat.dylib")
 
 # Run COFF tests
 test_libfoo_and_fooifier("./win32/fooifier.exe", "./win32/libfoo.dll")

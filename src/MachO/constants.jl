@@ -8,6 +8,9 @@
 
     const FAT_MAGIC = 0xCAFEBABE
     const FAT_CIGAM = bswap(FAT_MAGIC)
+
+    const FAT_MAGIC_64 = 0xCAFEBABF
+    const FAT_CIGAM_64 = bswap(FAT_MAGIC_64)
 end
 
 const CPU_ARCH_MASK     = 0xff000000

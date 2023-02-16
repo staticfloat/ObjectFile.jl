@@ -30,9 +30,9 @@ include("MachODynamicLink.jl")
 include("MachOStrTab.jl")
 include("MachOSymbol.jl")
 
-# We do not yet support Fat (Universal) MachO binaries, as I have yet to come
-# up with a nice abstraction over them that fits in well with COFF/ELF.
+# These aren't complete implementations of the API
 include("MachOFat.jl")
 
 
 end # module MachO
+

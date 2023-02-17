@@ -169,6 +169,19 @@ function test_fat_libfoo(file)
     @test n64 == 1
 end
 
+function test_metal(file)
+    oh = readmeta(open(file, "r"))
+    @test isa(oh, FatMachOHandle)
+    @test length(oh) == 2
+
+    arch = oh[1]
+    @test arch.header isa MachO.MachOHeader64
+    @test findfirst(Sections(arch), "__TEXT,__compute") !== nothing
+
+    arch = oh[2]
+    @test arch.header isa MachO.MetallibHeader
+end
+
 # Run ELF tests
 test_libfoo_and_fooifier("./linux32/fooifier", "./linux32/libfoo.so")
 test_libfoo_and_fooifier("./linux64/fooifier", "./linux64/libfoo.so")
@@ -176,6 +189,7 @@ test_libfoo_and_fooifier("./linux64/fooifier", "./linux64/libfoo.so")
 # Run MachO tests
 test_libfoo_and_fooifier("./mac64/fooifier", "./mac64/libfoo.dylib")
 test_fat_libfoo("./mac64/libfoo_fat.dylib")
+test_metal("./macmetal/dummy")
 
 # Run COFF tests
 test_libfoo_and_fooifier("./win32/fooifier.exe", "./win32/libfoo.dll")

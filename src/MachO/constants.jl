@@ -14,6 +14,8 @@
 
     const FAT_MAGIC_METAL = 0xCBFEBABE
     const FAT_CIGAM_METAL = bswap(FAT_MAGIC_METAL)
+
+    const METALLIB_MAGIC = 0x424c544d   # "MTLB" in ascii
 end
 
 const CPU_ARCH_MASK     = 0xff000000

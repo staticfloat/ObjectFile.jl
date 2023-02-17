@@ -32,6 +32,7 @@ include("MachOSymbol.jl")
 
 # These aren't complete implementations of the API
 include("MachOFat.jl")
+include("MetalLibrary.jl")
 
 
 end # module MachO

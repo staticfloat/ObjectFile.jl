@@ -5,8 +5,9 @@
 # Export Symbols API
 export Symbols,
        getindex, length, iterate, lastindex, eltype,
+       findall, findfirst,
        handle, header
-       
+
 # Export SymtabEntry API
 export SymtabEntry,
        deref, symbol_name, symbol_value, isundef, isglobal, islocal, isweak
@@ -15,8 +16,8 @@ export SymtabEntry,
 export SymbolRef,
        symbol_number
 
-# Import iteration protocol
-import Base: length, iterate, lastindex
+# Import Base methods for extension
+import Base: length, iterate, lastindex, findall, findfirst
 
 """
     Symbols
@@ -37,6 +38,10 @@ in emphasis:
   - length()
   - iterate()
   - eltype()
+
+### Search
+  - findall()
+  - findfirst()
 
 ### Misc.
   - *handle()*
@@ -60,6 +65,46 @@ function getindex(syms::Symbols{H}, idx) where {H <: ObjectHandle}
         SymbolRef,
         idx
     )
+end
+
+"""
+    findall(symbols::Symbols, name::String)
+
+Return a list of symbols that match the given `name`.
+"""
+function findall(symbols::Symbols, name::AbstractString)
+    return findall(symbols, [name])
+end
+
+"""
+    findall(symbols::Symbols, name::String)
+
+Return a list of symbols that match one of the given `names`.
+"""
+function findall(symbols::Symbols, names::Vector{S}) where {S <: AbstractString}
+    return [s for s in symbols if symbol_name(s) in names]
+end
+
+"""
+    findfirst(symbols::Symbols, name::String)
+
+Return the first section that matches the given `name`.
+"""
+function findfirst(symbols::Symbols, name::AbstractString)
+    return findfirst(symbols, [name])
+end
+
+"""
+    findfirst(symbols::Symbols, names::Vector{String})
+
+Return the first section that matches on of the given `names`.
+"""
+function findfirst(symbols::Symbols, names::Vector{String})
+    results = findall(symbols, names)
+    if isempty(results)
+        error("Could not find any symbols that match $(names)")
+    end
+    return first(results)
 end
 
 

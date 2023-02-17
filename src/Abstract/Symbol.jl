@@ -101,9 +101,7 @@ Return the first section that matches on of the given `names`.
 """
 function findfirst(symbols::Symbols, names::Vector{String})
     results = findall(symbols, names)
-    if isempty(results)
-        error("Could not find any symbols that match $(names)")
-    end
+    isempty(results) && return nothing
     return first(results)
 end
 

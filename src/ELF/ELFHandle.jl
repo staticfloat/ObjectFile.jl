@@ -35,7 +35,7 @@ function readmeta(io::IO, ::Type{H}) where {H <: ELFHandle}
     start = position(io)
 
     # Check for magic bytes
-    magic = [read(io, UInt8) for idx in 1:4]    
+    magic = [read(io, UInt8) for idx in 1:4]
     if any(magic .!= elven_magic)
         msg = """
         Magic Number 0x$(join(string.(magic, base=16),"")) does not match expected ELF
@@ -56,7 +56,7 @@ function readmeta(io::IO, ::Type{H}) where {H <: ELFHandle}
     seek(io, start)
 
     # Construct our ELFHandle, pilfering the filename from the IOStream
-    return ELFHandle(io, Int64(start), ei, header, path(io))
+    return [ELFHandle(io, Int64(start), ei, header, path(io))]
 end
 
 

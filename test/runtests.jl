@@ -6,7 +6,7 @@ using Test
     mktempdir() do dir
         fpath = joinpath(dir, "empty")
         touch(fpath)
-        @test_throws MagicMismatch readmeta(fpath) do oh
+        @test_throws MagicMismatch readmeta(fpath) do ohs
             @test false
         end
     end
@@ -14,8 +14,8 @@ end
 
 function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     # Actually read it in
-    oh_exe = readmeta(open(fooifier_path, "r"))
-    oh_lib = readmeta(open(libfoo_path, "r"))
+    oh_exe = only(readmeta(open(fooifier_path, "r")))
+    oh_lib = only(readmeta(open(libfoo_path, "r")))
 
     # Tease out some information from the containing folder name
     dir_path = basename(dirname(libfoo_path))
@@ -158,28 +158,31 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
 end
 
 function test_fat_libfoo(file)
-    oh = readmeta(open(file, "r"))
-    @test isa(oh, FatMachOHandle)
-    local (ntotal, n64) = (0, 0)
-    for coh in oh
+    ohs = readmeta(open(file, "r"))
+    @test isa(ohs, FatMachOHandle)
+    @test length(ohs) == 2
+    ntotal, n64 = 0, 0
+    for oh in ohs
         ntotal += 1
-        n64 += is64bit(coh)
+        n64 += is64bit(oh)
     end
     @test ntotal == 2
     @test n64 == 1
 end
 
 function test_metal(file)
-    oh = readmeta(open(file, "r"))
-    @test isa(oh, FatMachOHandle)
-    @test length(oh) == 2
+    ohs = readmeta(open(file, "r"))
+    @test isa(ohs, FatMachOHandle)
+    @test length(ohs) == 2
 
-    arch = oh[1]
-    @test arch.header isa MachO.MachOHeader64
-    @test findfirst(Sections(arch), "__TEXT,__compute") !== nothing
+    let oh = ohs[1]
+        @test oh.header isa MachO.MachOHeader64
+        @test findfirst(Sections(oh), "__TEXT,__compute") !== nothing
+    end
 
-    arch = oh[2]
-    @test arch.header isa MachO.MetallibHeader
+    let oh = ohs[2]
+        @test oh.header isa MachO.MetallibHeader
+    end
 end
 
 # Run ELF tests
@@ -202,7 +205,8 @@ test_libfoo_and_fooifier("./win64/fooifier.exe", "./win64/libfoo.dll")
 
     # Extract all pieces of `.gnu.version_d` from libstdc++.so, find the `GLIBCXX_*`
     # symbols, and use the maximum version of that to find the GLIBCXX ABI version number
-    version_symbols = readmeta(libstdcxx_path) do oh
+    version_symbols = readmeta(libstdcxx_path) do ohs
+        oh = only(ohs)
         unique(vcat((x -> x.names).(ObjectFile.ELF.ELFVersionData(oh))...))
     end
     version_symbols = filter(x -> startswith(x, "GLIBCXX_"), version_symbols)
@@ -216,7 +220,8 @@ end
     # Test that 6a66694a8dd5ca85bd96fe6236f21d5b183e7de6 fix worked
     libmsobj_path = "./win32/msobj140.dll"
 
-    dynamic_links = readmeta(libmsobj_path) do oh
+    dynamic_links = readmeta(libmsobj_path) do ohs
+        oh = only(ohs)
         path.(DynamicLinks(oh))
     end
 
@@ -226,7 +231,8 @@ end
     @test "api-ms-win-crt-runtime-l1-1-0.dll" in dynamic_links
 
     whouses_exe = "./win32/WhoUses.exe"
-    dynamic_links = readmeta(whouses_exe) do oh
+    dynamic_links = readmeta(whouses_exe) do ohs
+        oh = only(ohs)
         path.(DynamicLinks(oh))
     end
 

@@ -35,7 +35,7 @@ function readmeta(io::IO,::Type{MachOHandle})
 
     # Unpack the header
     header = unpack(io, header_type, endianness)
-    return MachOHandle(io, Int64(start), header, path(io))
+    return [MachOHandle(io, Int64(start), header, path(io))]
 end
 
 ## IOStream-like operations:

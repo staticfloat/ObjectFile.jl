@@ -70,7 +70,7 @@ length(h::FatMachOHandle) = length(h.header.archs)
 eltype(::Type{S}) where {S <: FatMachOHandle} = MachOLoadCmdRef
 function getindex(h::FatMachOHandle, idx)
     seek(h.io, h.start + h.header.archs[idx].offset)
-    readmeta(h.io, MachOHandle)
+    only(readmeta(h.io, MachOHandle))
 end
 
 function show(io::IO, oh::FatMachOHandle)

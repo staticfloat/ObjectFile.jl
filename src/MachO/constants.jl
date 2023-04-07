@@ -8,6 +8,14 @@
 
     const FAT_MAGIC = 0xCAFEBABE
     const FAT_CIGAM = bswap(FAT_MAGIC)
+
+    const FAT_MAGIC_64 = 0xCAFEBABF
+    const FAT_CIGAM_64 = bswap(FAT_MAGIC_64)
+
+    const FAT_MAGIC_METAL = 0xCBFEBABE
+    const FAT_CIGAM_METAL = bswap(FAT_MAGIC_METAL)
+
+    const METALLIB_MAGIC = 0x424c544d   # "MTLB" in ascii
 end
 
 const CPU_ARCH_MASK     = 0xff000000

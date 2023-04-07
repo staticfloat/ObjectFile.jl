@@ -33,6 +33,7 @@ end
     flags::UInt32
     reserved1::UInt32
     reserved2::UInt32
+    reserved3::UInt32
 end
 
 function read(oh::MachOHandle, ::Type{ST}) where {ST <: MachOSection}
@@ -98,7 +99,10 @@ end
 
 handle(sections::MachOSections) = sections.handle
 lastindex(sections::MachOSections) = lastindex(sections.sections)
-getindex(sections::MachOSections, idx) = getindex(sections.sections, idx)
+function getindex(sections::MachOSections{H}, idx) where {H <: MachOHandle}
+    section = sections.sections[idx]
+    return MachOSectionRef(sections, section, UInt32(idx))
+end
 
 Sections(segs::MachOSegments) = MachOSections(segs)
 Sections(oh::MachOHandle) = Sections(Segments(oh))
@@ -108,7 +112,7 @@ Sections(oh::MachOHandle) = Sections(Segments(oh))
 
 Mach-O `SectionRef` type
 """
-struct MachOSectionRef{H <: MachOHandle} <: Sections{H}
+struct MachOSectionRef{H <: MachOHandle} <: SectionRef{H}
     sections::MachOSections{H}
     section::MachOSection{H}
     idx::UInt32
@@ -117,4 +121,8 @@ end
 function SectionRef(sections::MachOSections, s::MachOSection, idx)
     return MachOSectionRef(sections, s, UInt32(idx))
 end
+deref(s::MachOSectionRef) = s.section
+sections(s::MachOSectionRef) = s.sections
+handle(s::MachOSectionRef) = handle(sections(s))
+section_number(s::MachOSectionRef) = s.idx
 @derefmethod is64bit(s::MachOSectionRef)

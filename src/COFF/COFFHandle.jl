@@ -13,7 +13,7 @@ struct COFFHandle{T<:IO} <: ObjectHandle
 
     # The parsed-out header of the COFF object
     header::COFFHeader
-    
+
     # The location of the header (because of MZ confusion, we must store this)
     header_offset::UInt32
 
@@ -63,7 +63,7 @@ function readmeta(io::IO, ::Type{H}) where {H <: COFFHandle}
     opt_header = read(io, COFFOptionalHeader)
 
     # Construct our COFFHandle, pilfering the filename from the IOStream
-    return COFFHandle(io, Int64(start), header, header_offset, opt_header, path(io))
+    return [COFFHandle(io, Int64(start), header, header_offset, opt_header, path(io))]
 end
 
 

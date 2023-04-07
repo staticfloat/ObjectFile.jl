@@ -370,7 +370,7 @@ Try to guess the path of an `IO` object.  If it cannot be guessed, returns the
 empty string.
 """
 function path(io::IO)
-    if startswith(io.name, "<file ") && endswith(io.name, ">")
+    if hasfield(typeof(io), :name) && startswith(io.name, "<file ") && endswith(io.name, ">")
         return abspath(io.name[7:end-1])
     end
     return ""

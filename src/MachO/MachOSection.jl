@@ -33,6 +33,7 @@ end
     flags::UInt32
     reserved1::UInt32
     reserved2::UInt32
+    reserved3::UInt32
 end
 
 function read(oh::MachOHandle, ::Type{ST}) where {ST <: MachOSection}

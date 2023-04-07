@@ -43,7 +43,7 @@ end
 struct FatMachOHandle{T <: IO} <: AbstractMachOHandle{T}
     # Backing IO and start point within the IOStream of this MachO object
     io::T
-    start::Int
+    start::Int64
 
     # The parsed-out header of the MachO object
     header::MachOFatHeader

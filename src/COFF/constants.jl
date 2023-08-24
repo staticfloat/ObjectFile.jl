@@ -24,6 +24,20 @@
     const IMAGE_FILE_MACHINE_WCEMIPSV2      = 0x169     #   MIPS little-endian WCE v2
 end
 
+function coff_machine_to_arch(machine::UInt16)
+    if machine ∈ (IMAGE_FILE_MACHINE_I386,)
+        return "i686"
+    elseif machine ∈ (IMAGE_FILE_MACHINE_AMD64, IMAGE_FILE_MACHINE_IA64)
+        return "x86_64"
+    elseif machine ∈ (IMAGE_FILE_MACHINE_ARM, IMAGE_FILE_MACHINE_ARMNT, IMAGE_FILE_MACHINE_THUMB)
+        return "armv7l"
+    elseif machine ∈ (IMAGE_FILE_MACHINE_ARM64,)
+        return "aarch64"
+    elseif machine ∈ (IMAGE_FILE_MACHINE_POWERPC,)
+        return "ppc64le"
+    end
+end
+
 # # # Characteristics
 
 @constants IMAGE_FILE_CHARACTERISTICS "IMAGE_FILE_" begin

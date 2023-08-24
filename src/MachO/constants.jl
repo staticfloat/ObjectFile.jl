@@ -48,6 +48,21 @@ const CPU_ARCH_ABI64_32 = 0x02000000
     const CPU_TYPE_ARM64_32     = CPU_TYPE_ARM | CPU_ARCH_ABI64_32
 end
 
+function macho_cpu_to_arch(cputype::UInt32)
+    if cputype ∈ (CPU_TYPE_X86,)
+        return "i686"
+    elseif cputype ∈ (CPU_TYPE_X86_64,)
+        return "x86_64"
+    elseif cputype ∈ (CPU_TYPE_ARM,)
+        return "armv7l"
+    elseif cputype ∈ (CPU_TYPE_POWERPC64,)
+        return "ppc64le"
+    elseif cputype ∈ (CPU_TYPE_ARM64,)
+        return "aarch64"
+    end
+end
+
+
 # TODO subtype constants
 @constants NLISTTYPES "N_" begin
     const N_STAB         = 0xe0

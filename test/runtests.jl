@@ -1,4 +1,4 @@
-using ObjectFile
+using ObjectFile, Base.BinaryPlatforms
 using Test
 
 @testset "basic" begin
@@ -29,6 +29,14 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
     H = types[platform]
     bits = dir_path[end-1:end]
 
+    platforms = Dict(
+        "linux32" => Platform("i686", "linux"),
+        "linux64" => Platform("x86_64", "linux"),
+        "mac64" => Platform("x86_64", "macos"),
+        "win32" => Platform("i686", "windows"),
+        "win64" => Platform("x86_64", "windows"),
+    )
+
     @testset "$(dir_path)" begin
         @testset "General Properties" begin
             for oh in (oh_exe, oh_lib)
@@ -37,6 +45,7 @@ function test_libfoo_and_fooifier(fooifier_path, libfoo_path)
 
                 # Test that we got the right number of bits
                 @test is64bit(oh) == (bits == "64")
+                @test platforms_match(Platform(oh), platforms[dir_path])
 
                 # Everything is always little endian
                 @test endianness(oh) == :LittleEndian

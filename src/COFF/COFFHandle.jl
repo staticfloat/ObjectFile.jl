@@ -73,6 +73,7 @@ iostream(oh::COFFHandle) = oh.io
 
 ## Format-specific properties:
 header(oh::COFFHandle) = oh.header
+Platform(oh::COFFHandle) = Platform(coff_machine_to_arch(oh.header.Machine), "windows")
 endianness(oh::COFFHandle) = coff_header_endianness(header(oh))
 is64bit(oh::COFFHandle) = coff_header_is64bit(header(oh))
 isrelocatable(oh::COFFHandle) = isrelocatable(header(oh))

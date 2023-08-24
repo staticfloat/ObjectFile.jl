@@ -1,5 +1,6 @@
 module ObjectFile
 using Reexport
+import Base.BinaryPlatforms: Platform
 
 # Include base utilities
 include("utils.jl")

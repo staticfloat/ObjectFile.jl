@@ -44,6 +44,7 @@ where `oh <: COFFHandle`).
   - unpack()
 
 ### Format-specific properties
+  - *Platform()*
   - *endianness()*
   - *is64bit()*
   - *isrelocatable()*
@@ -189,6 +190,12 @@ for f in [:skip, :seekstart, :eof, :read, :readuntil, :readbytes, :write]
     @eval $(f)(oh::H, args...) where {H<:ObjectHandle} = $(f)(iostream(oh), args...)
 end
 
+"""
+    Platform(oh::ObjectHandle)
+
+Returns a `Platform` object representing the binary platform this object is built for.
+"""
+@mustimplement Platform(oh::ObjectHandle)
 
 """
     endianness(oh::ObjectHandle)

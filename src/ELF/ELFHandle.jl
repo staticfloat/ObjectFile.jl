@@ -64,9 +64,15 @@ end
 startaddr(oh::ELFHandle) = oh.start
 iostream(oh::ELFHandle) = oh.io
 
+# We don't try to inspect dynamic libraries to figure out if this is a glibc or musl dynamic object
+function strip_libc_tag(p::Platform)
+    delete!(tags(p), "libc")
+    return p
+end
 
 ## Format-specific properties:
 header(oh::ELFHandle) = oh.header
+Platform(oh::ELFHandle) = strip_libc_tag(Platform(elf_machine_to_arch(oh.header.e_machine), "linux"))
 endianness(oh::ELFHandle) = elf_internal_endianness(oh.ei)
 is64bit(oh::ELFHandle) = elf_internal_is64bit(oh.ei)
 isrelocatable(oh::ELFHandle) = header(oh).e_type == ET_REL

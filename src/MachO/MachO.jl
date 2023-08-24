@@ -1,6 +1,7 @@
 module MachO
 
-using StructIO
+using StructIO, Base.BinaryPlatforms
+import Base.BinaryPlatforms: Platform
 
 # Bring in ObjectFile definitions
 using ObjectFile

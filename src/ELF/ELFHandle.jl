@@ -72,7 +72,16 @@ end
 
 ## Format-specific properties:
 header(oh::ELFHandle) = oh.header
-Platform(oh::ELFHandle) = strip_libc_tag(Platform(elf_machine_to_arch(oh.header.e_machine), "linux"))
+function Platform(oh::ELFHandle)
+    arch = elf_machine_to_arch(oh.header.e_machine)
+    if oh.ei.osabi == ELFOSABI_LINUX || oh.ei.osabi == ELFOSABI_NONE
+        return strip_libc_tag(Platform(arch, "linux"))
+    elseif oh.ei.osabi == ELFOSABI_FREEBSD
+        return Platform(arch, "freebsd")
+    else
+        throw(ArgumentError("Unknown ELF OSABI $(oh.ei.osabi)"))
+    end
+end
 endianness(oh::ELFHandle) = elf_internal_endianness(oh.ei)
 is64bit(oh::ELFHandle) = elf_internal_is64bit(oh.ei)
 isrelocatable(oh::ELFHandle) = header(oh).e_type == ET_REL

@@ -56,6 +56,20 @@ function machinetype(e_machine)
     return string("Unknown (0x",string(e_machine, base=16),")")
 end
 
+function elf_machine_to_arch(machine::UInt16)
+    if machine ∈ (EM_386,)
+        return "i686"
+    elseif machine ∈ (EM_IA_64, EM_X86_64)
+        return "x86_64"
+    elseif machine ∈ (EM_ARM,)
+        return "armv7l"
+    elseif machine ∈ (EM_AARCH64,)
+        return "aarch64"
+    elseif machine ∈ (EM_PPC64,)
+        return "ppc64le"
+    end
+end
+
 
 function show(io::IO, header::ELFHeader)
     println(io, "ELF Header")

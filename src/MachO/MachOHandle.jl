@@ -46,6 +46,7 @@ iostream(oh::AbstractMachOHandle) = oh.io
 ## Format-specific properties:
 header(oh::AbstractMachOHandle) = oh.header
 endianness(oh::AbstractMachOHandle) = macho_endianness(header(oh).magic)
+Platform(oh::MachOHandle) = Platform(macho_cpu_to_arch(header(oh).cputype), "macos")
 is64bit(oh::MachOHandle) = macho_is64bit(header(oh).magic)
 isrelocatable(oh::MachOHandle) = header(oh).filetype == MH_OBJECT
 isexecutable(oh::MachOHandle) = header(oh).filetype == MH_EXECUTE

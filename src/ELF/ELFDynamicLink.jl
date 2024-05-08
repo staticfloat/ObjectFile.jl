@@ -89,7 +89,7 @@ Stores the RPath entries from an ELF object
 """
 struct ELFRPath{H <: ELFHandle} <: RPath{H}
     section_ref::SectionRef{H}
-    rpath::Vector
+    rpath::Vector{<:AbstractString}
 end
 
 """
@@ -106,8 +106,13 @@ function RPath(oh::ELFHandle)
     des = ELFDynEntries(oh, [DT_RPATH, DT_RUNPATH])
     
     # Lookup each and every one of those strings, split them out into paths
-    colon_paths = [strtab_lookup(d) for d in des]
-    paths = vcat([split(p, ":") for p in colon_paths]...)
+    colon_paths = String[strtab_lookup(d) for d in des]
+    paths = AbstractString[]
+    for colon_path in colon_paths
+        for component in split(colon_path, ':')
+            push!(paths, component)
+        end
+    end
 
     # Return our RPath object
     return ELFRPath(dyn_section, paths)

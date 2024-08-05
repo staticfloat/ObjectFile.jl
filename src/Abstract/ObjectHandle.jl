@@ -14,6 +14,7 @@ export MagicMismatch
 # Import methods for extension
 import Base: seek, seekstart, skip, position, read, readuntil, eof,
              getindex
+import Base.Sys: isexecutable
 import StructIO: unpack
 
 """
